@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>디지몬마스터즈 컨텐츠 도우미</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #e2e8f0;
+            color: #1e293b;
+            transition: background-color 0.3s ease;
+        }
+        .emphasized-char {
+            color: #f97316; /* 오렌지색으로 강조 */
+            font-weight: bold;
+        }
+        .firework {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+            animation: explode 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+            opacity: 0;
+        }
+        @keyframes explode {
+            0% {
+                transform: translate(-50%, -50%) scale(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.5) rotate(720deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8 bg-gray-100 min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-200 to-indigo-200">
+
+    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-4xl relative">
+        <!-- 타이머 컨테이너 -->
+        <div class="absolute top-4 right-4 text-right text-sm text-gray-600 space-y-1">
+            <div id="daily-timer"></div>
+            <div id="weekly-timer"></div>
+        </div>
+        
+        <h1 class="text-3xl font-bold text-center text-blue-800 mb-6">디지몬마스터즈 컨텐츠 도우미</h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- 일일 컨텐츠 목록 -->
+            <div class="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-gray-800">일일 컨텐츠 (<span id="daily-count">0/12</span>)</h2>
+                </div>
+                <ul id="daily-quest-list" class="space-y-3">
+                    <!-- 퀘스트 아이템이 여기에 렌더링됩니다 -->
+                </ul>
+            </div>
+
+            <!-- 주간 컨텐츠 목록 -->
+            <div class="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-gray-800">주간 컨텐츠 (<span id="weekly-count">0/12</span>)</h2>
+                </div>
+                <ul id="weekly-quest-list" class="space-y-3">
+                    <!-- 퀘스트 아이템이 여기에 렌더링됩니다 -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fixed quest content lists
+        const hardcodedQuests = {
+            daily: [
+                { id: 'daily-1', name: '할배몬의 럭키 박스', completed: false, emphasizedParts: [] },
+                { id: 'daily-2', name: '출석 이벤트', completed: false, emphasizedParts: [] },
+                { id: 'daily-3', name: '접속시간 보상', completed: false, emphasizedParts: [] },
+                { id: 'daily-4', name: 'T 디지털 드로우', completed: false, emphasizedParts: [] },
+                { id: 'daily-5', name: '간쿠몬의 수련장', completed: false, emphasizedParts: [] },
+                { id: 'daily-6', name: '시즌패스 퀘스트 - 일일', completed: false, emphasizedParts: [] },
+                { id: 'daily-7', name: 'EP', completed: false, emphasizedParts: [] },
+                { id: 'daily-8', name: '요일 던전 - 그림자 미궁', completed: false, emphasizedParts: [] },
+                { id: 'daily-9', name: '서버대륙 사막 - 이속칩', completed: false, emphasizedParts: [] },
+                { id: 'daily-10', name: '카이저의 영역 레이드(카영레) 티켓', completed: false, emphasizedParts: ['카영레'] },
+                { id: 'daily-11', name: '로얄베이스 어려움(로어) - 일일', completed: false, emphasizedParts: ['로어'] },
+                { id: 'daily-12', name: '파괴와 재생 (스던) - 일일', completed: false, emphasizedParts: ['스던'] },
+            ],
+            weekly: [
+                { id: 'weekly-1', name: '시즌패스 퀘스트 - 주간', completed: false, emphasizedParts: [] },
+                { id: 'weekly-2', name: '디지몬 아레나', completed: false, emphasizedParts: [] },
+                { id: 'weekly-3', name: '참치캔 던전', completed: false, emphasizedParts: [] },
+                { id: 'weekly-4', name: '로얄베이스 HARD (로어) - 주간', completed: false, emphasizedParts: ['로어'] },
+                { id: 'weekly-5', name: '파괴와 재생 (스던) - 주간', completed: false, emphasizedParts: ['스던'] },
+                { id: 'weekly-6', name: '디지몬 카이저 (메청)', completed: false, emphasizedParts: ['메청'] },
+                { id: 'weekly-7', name: '카이저의 기지 EASY (키이)', completed: false, emphasizedParts: ['키이'] },
+                { id: 'weekly-8', name: '카이저의 기지 NORMAL (키노)', completed: false, emphasizedParts: ['키노'] },
+                { id: 'weekly-9', name: '상점가 EASY (상이지)', completed: false, emphasizedParts: ['상이지'] },
+                { id: 'weekly-10', name: '상점가 NORMAL (상노)', completed: false, emphasizedParts: ['상노'] },
+                { id: 'weekly-11', name: '사성수 던전 NORMAL ~ HARD', completed: false, emphasizedParts: ['사성수'] },
+                { id: 'weekly-12', name: '황룡몬 던전 NORMAL ~ HARD (판노 ~ 판어)', completed: false, emphasizedParts: ['판노', '판어'] },
+            ]
+        };
+
+        let quests = {};
+
+        // Function to save data to local storage
+        const saveQuests = () => {
+            localStorage.setItem('digimonQuests', JSON.stringify(quests));
+        };
+
+        // Function to load data from local storage
+        const loadQuests = () => {
+            const stored = localStorage.getItem('digimonQuests');
+            return stored ? JSON.parse(stored) : null;
+        };
+        
+        // Function to reset quests
+        const resetQuests = (type) => {
+            if (quests[type]) {
+                quests[type] = quests[type].map(q => ({ ...q, completed: false }));
+            }
+        };
+
+        // Automatic reset logic
+        const handleAutoReset = () => {
+            const now = new Date();
+            const lastDailyReset = new Date(localStorage.getItem('lastDailyReset') || 0);
+            const lastWeeklyReset = new Date(localStorage.getItem('lastWeeklyReset') || 0);
+            
+            // Daily reset (at 00:00)
+            const isDifferentDay = now.getDate() !== lastDailyReset.getDate() ||
+                                   now.getMonth() !== lastDailyReset.getMonth() ||
+                                   now.getFullYear() !== lastDailyReset.getFullYear();
+            if (isDifferentDay) {
+                resetQuests('daily');
+                localStorage.setItem('lastDailyReset', now.toISOString());
+            }
+
+            // Weekly reset (Wednesday at 06:00)
+            const dayOfWeek = now.getDay();
+            const daysToAdd = (3 - dayOfWeek + 7) % 7;
+            const nextWeeklyReset = new Date(now);
+            nextWeeklyReset.setDate(now.getDate() + daysToAdd);
+            nextWeeklyReset.setHours(6, 0, 0, 0);
+            
+            if (lastWeeklyReset < nextWeeklyReset && now > nextWeeklyReset) {
+                resetQuests('weekly');
+                localStorage.setItem('lastWeeklyReset', now.toISOString());
+            }
+        };
+
+        // Timer update function
+        const updateTimers = () => {
+            const now = new Date();
+            
+            // Daily timer calculation
+            const nextDailyReset = new Date(now);
+            nextDailyReset.setDate(now.getDate() + 1);
+            nextDailyReset.setHours(0, 0, 0, 0);
+            const dailyTimeDiff = nextDailyReset - now;
+            
+            const dailyHours = Math.floor((dailyTimeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const dailyMinutes = Math.floor((dailyTimeDiff % (1000 * 60 * 60)) / (1000 * 60));
+            const dailySeconds = Math.floor((dailyTimeDiff % (1000 * 60)) / 1000);
+            
+            document.getElementById('daily-timer').textContent = `일일 초기화: ${String(dailyHours).padStart(2, '0')}:${String(dailyMinutes).padStart(2, '0')}:${String(dailySeconds).padStart(2, '0')}`;
+
+            // Weekly timer calculation (Wednesday at 06:00)
+            const dayOfWeek = now.getDay();
+            let daysUntilNextWednesday = (3 - dayOfWeek + 7) % 7;
+            if (daysUntilNextWednesday === 0 && now.getHours() >= 6) {
+                daysUntilNextWednesday = 7;
+            }
+            
+            const nextWeeklyReset = new Date(now);
+            nextWeeklyReset.setDate(now.getDate() + daysUntilNextWednesday);
+            nextWeeklyReset.setHours(6, 0, 0, 0);
+            const weeklyTimeDiff = nextWeeklyReset - now;
+
+            const weeklyDays = Math.floor(weeklyTimeDiff / (1000 * 60 * 60 * 24));
+            const weeklyHours = Math.floor((weeklyTimeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const weeklyMinutes = Math.floor((weeklyTimeDiff % (1000 * 60 * 60)) / (1000 * 60));
+            const weeklySeconds = Math.floor((weeklyTimeDiff % (1000 * 60)) / 1000);
+            
+            document.getElementById('weekly-timer').textContent = `주간 초기화: ${weeklyDays}일 ${String(weeklyHours).padStart(2, '0')}:${String(weeklyMinutes).padStart(2, '0')}:${String(weeklySeconds).padStart(2, '0')}`;
+        };
+
+        // Function to celebrate with a more spectacular animation
+        const celebrate = () => {
+            const colors = ['#ff6b6b', '#ffd166', '#49a3e3', '#66cc99', '#ff99e6', '#c084fc', '#f472b6'];
+            const numberOfParticles = 300;
+
+            for (let i = 0; i < numberOfParticles; i++) {
+                const particle = document.createElement('div');
+                const randomSize = Math.floor(Math.random() * 8) + 5; // Size between 5px and 12px
+                
+                particle.className = 'firework';
+                
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * Math.max(window.innerWidth, window.innerHeight) / 2;
+                
+                const x = window.innerWidth / 2 + Math.cos(angle) * distance;
+                const y = window.innerHeight / 2 + Math.sin(angle) * distance;
+                
+                particle.style.width = `${randomSize}px`;
+                particle.style.height = `${randomSize}px`;
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+                particle.style.animationDelay = `${Math.random() * 0.8}s`;
+
+                document.body.appendChild(particle);
+
+                setTimeout(() => {
+                    particle.remove();
+                }, 1500);
+            }
+        };
+
+        // Function to set initial quest data
+        const initializeQuests = () => {
+            const storedQuests = loadQuests();
+            if (storedQuests) {
+                const newQuests = { daily: [], weekly: [] };
+                
+                hardcodedQuests.daily.forEach(q => {
+                    const existing = storedQuests.daily.find(sq => sq.id === q.id);
+                    newQuests.daily.push(existing ? { ...q, completed: existing.completed } : q);
+                });
+                
+                hardcodedQuests.weekly.forEach(q => {
+                    const existing = storedQuests.weekly.find(sq => sq.id === q.id);
+                    newQuests.weekly.push(existing ? { ...q, completed: existing.completed } : q);
+                });
+
+                quests = newQuests;
+            } else {
+                quests = JSON.parse(JSON.stringify(hardcodedQuests));
+            }
+            
+            handleAutoReset();
+            renderQuests();
+        };
+
+        // Function to render quests and update counters
+        const renderQuests = () => {
+            const dailyList = document.getElementById('daily-quest-list');
+            const weeklyList = document.getElementById('weekly-quest-list');
+            const dailyCount = document.getElementById('daily-count');
+            const weeklyCount = document.getElementById('weekly-count');
+
+            dailyList.innerHTML = '';
+            weeklyList.innerHTML = '';
+
+            quests.daily.forEach(quest => dailyList.appendChild(createQuestItem(quest, 'daily')));
+            quests.weekly.forEach(quest => weeklyList.appendChild(createQuestItem(quest, 'weekly')));
+            
+            // Update counters
+            const dailyCompleted = quests.daily.filter(q => q.completed).length;
+            const weeklyCompleted = quests.weekly.filter(q => q.completed).length;
+            dailyCount.textContent = `${dailyCompleted}/${quests.daily.length}`;
+            weeklyCount.textContent = `${weeklyCompleted}/${quests.weekly.length}`;
+            
+            saveQuests();
+        };
+
+        // Function to create quest item HTML element
+        const createQuestItem = (quest, type) => {
+            const li = document.createElement('li');
+            li.className = `flex items-center p-3 rounded-lg shadow-sm transition-all duration-200 cursor-pointer ${quest.completed ? 'bg-green-200 text-gray-700' : 'bg-white hover:bg-gray-100'}`;
+            li.onclick = () => toggleCompletion(quest.id, type);
+            
+            const span = document.createElement('span');
+            span.className = `flex-grow`;
+            
+            if (quest.id === 'weekly-12') {
+                span.classList.add('text-sm');
+            }
+
+            const parts = renderQuestNameWithEmphasis(quest.name, quest.emphasizedParts);
+            parts.forEach(p => span.appendChild(p));
+
+            li.appendChild(span);
+
+            if (quest.completed) {
+                const checkmarkSpan = document.createElement('span');
+                checkmarkSpan.textContent = '✓';
+                checkmarkSpan.className = 'ml-auto text-xl text-green-600 font-bold';
+                li.appendChild(checkmarkSpan);
+            }
+
+            return li;
+        };
+
+        // Function to apply emphasis to quest names
+        const renderQuestNameWithEmphasis = (name, emphasizedParts) => {
+            const elements = [];
+            let currentText = name;
+
+            emphasizedParts.forEach(part => {
+                const index = currentText.indexOf(part);
+                if (index !== -1) {
+                    const textBefore = currentText.substring(0, index);
+                    const emphasizedPart = currentText.substring(index, index + part.length);
+                    currentText = currentText.substring(index + part.length);
+
+                    if (textBefore) {
+                        elements.push(document.createTextNode(textBefore));
+                    }
+                    const span = document.createElement('span');
+                    span.textContent = emphasizedPart;
+                    span.className = 'emphasized-char';
+                    elements.push(span);
+                }
+            });
+
+            if (currentText) {
+                elements.push(document.createTextNode(currentText));
+            }
+            return elements;
+        };
+
+        // Function to toggle quest completion status
+        const toggleCompletion = (id, type) => {
+            const questToToggle = quests[type].find(q => q.id === id);
+            if (questToToggle) {
+                questToToggle.completed = !questToToggle.completed;
+                
+                // Check if all quests of this type are now completed
+                const completedCount = quests[type].filter(q => q.completed).length;
+                if (completedCount === quests[type].length) {
+                    celebrate();
+                }
+
+                renderQuests();
+            }
+        };
+
+        // On page load, load quests and start the timers
+        window.onload = () => {
+            initializeQuests();
+            setInterval(updateTimers, 1000); // Update the timers every second
+        };
+    </script>
+</body>
+</html>
