@@ -33,11 +33,57 @@
                 opacity: 0;
             }
         }
+        .danbam-green {
+            color: #2e7d32; /* 소주병 느낌의 진한 녹색 */
+        }
+        .disabled-item {
+            background-color: #e5e7eb !important;
+            color: #9ca3af !important;
+            text-decoration: line-through;
+        }
+        .text-xxs {
+            font-size: 0.65rem;
+        }
+        /* 추가된 더 작은 폰트 크기 */
+        .text-xxxs {
+            font-size: 0.5rem;
+        }
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 500px;
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
     </style>
 </head>
 <body class="p-4 sm:p-8 bg-gray-100 min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-200 to-indigo-200">
 
     <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-4xl relative">
+        <!-- 만든사람 저작권 표기 -->
+        <div class="absolute top-4 left-4 text-xs text-gray-600">
+            Made by. <span class="font-extrabold text-blue-800">짠밤</span><span class="text-xxxs">, from <span class="font-bold danbam-green text-xxs">단밤</span> Guild</span>
+        </div>
+
         <!-- 타이머 컨테이너 -->
         <div class="absolute top-4 right-4 text-right text-sm text-gray-600 space-y-1">
             <div id="daily-timer"></div>
@@ -48,61 +94,81 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <!-- 일일 컨텐츠 목록 -->
-            <div class="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200">
+            <div class="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200 flex flex-col">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-2xl font-bold text-gray-800">일일 컨텐츠 (<span id="daily-count">0/12</span>)</h2>
+                    <h2 class="text-2xl font-bold text-gray-800">일일 컨텐츠 (<span id="daily-count">0/13</span>)</h2>
+                    <button id="daily-disable-btn" onclick="openDisableModal('daily')" class="text-xs text-white bg-blue-500 hover:bg-blue-600 rounded-lg px-2 py-1 transition-colors duration-200">비활성 설정</button>
                 </div>
-                <ul id="daily-quest-list" class="space-y-3">
+                <ul id="daily-quest-list" class="flex flex-col flex-grow justify-between gap-3">
                     <!-- 퀘스트 아이템이 여기에 렌더링됩니다 -->
                 </ul>
             </div>
 
             <!-- 주간 컨텐츠 목록 -->
-            <div class="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200">
+            <div class="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200 flex flex-col">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-2xl font-bold text-gray-800">주간 컨텐츠 (<span id="weekly-count">0/12</span>)</h2>
+                    <h2 class="text-2xl font-bold text-gray-800">주간 컨텐츠 (<span id="weekly-count">0/13</span>)</h2>
+                    <button id="weekly-disable-btn" onclick="openDisableModal('weekly')" class="text-xs text-white bg-blue-500 hover:bg-blue-600 rounded-lg px-2 py-1 transition-colors duration-200">비활성 설정</button>
                 </div>
-                <ul id="weekly-quest-list" class="space-y-3">
+                <ul id="weekly-quest-list" class="flex flex-col flex-grow gap-3">
                     <!-- 퀘스트 아이템이 여기에 렌더링됩니다 -->
                 </ul>
             </div>
         </div>
+
+        <!-- Modal for disabling quests -->
+        <div id="disable-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 id="modal-title" class="text-xl font-bold text-gray-800">컨텐츠 비활성 설정</h3>
+                    <button onclick="closeDisableModal()" class="text-gray-500 hover:text-gray-700 text-2xl font-bold">&times;</button>
+                </div>
+                <div id="modal-list" class="space-y-2">
+                    <!-- Checkbox list will be rendered here -->
+                </div>
+                <button onclick="closeDisableModal()" class="mt-6 w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200">닫기</button>
+            </div>
+        </div>
+
     </div>
 
     <script>
         // Fixed quest content lists
         const hardcodedQuests = {
             daily: [
-                { id: 'daily-1', name: '할배몬의 럭키 박스', completed: false, emphasizedParts: [] },
-                { id: 'daily-2', name: '출석 이벤트', completed: false, emphasizedParts: [] },
-                { id: 'daily-3', name: '접속시간 보상', completed: false, emphasizedParts: [] },
-                { id: 'daily-4', name: 'T 디지털 드로우', completed: false, emphasizedParts: [] },
-                { id: 'daily-5', name: '간쿠몬의 수련장', completed: false, emphasizedParts: [] },
-                { id: 'daily-6', name: '시즌패스 퀘스트 - 일일', completed: false, emphasizedParts: [] },
-                { id: 'daily-7', name: 'EP', completed: false, emphasizedParts: [] },
-                { id: 'daily-8', name: '요일 던전 - 그림자 미궁', completed: false, emphasizedParts: [] },
-                { id: 'daily-9', name: '서버대륙 사막 - 이속칩', completed: false, emphasizedParts: [] },
-                { id: 'daily-10', name: '카이저의 영역 레이드(카영레) 티켓', completed: false, emphasizedParts: ['카영레'] },
-                { id: 'daily-11', name: '로얄베이스 어려움(로어) - 일일', completed: false, emphasizedParts: ['로어'] },
-                { id: 'daily-12', name: '파괴와 재생 (스던) - 일일', completed: false, emphasizedParts: ['스던'] },
+                { id: 'daily-1', name: '할배몬의 럭키 박스', completed: false, disabled: false, emphasizedParts: [] },
+                { id: 'daily-2', name: '일일 출석', completed: false, disabled: false, emphasizedParts: [] },
+                { id: 'daily-4', name: '이벤트 출석 (06시 초기화)', completed: false, disabled: false, emphasizedParts: [] },
+                { id: 'daily-3', name: '접속시간 보상', completed: false, disabled: false, emphasizedParts: [] },
+                { id: 'daily-5', name: '간쿠몬의 수련장', completed: false, disabled: false, emphasizedParts: [] },
+                { id: 'daily-6', name: '시즌패스 퀘스트 - 일일', completed: false, disabled: false, emphasizedParts: [] },
+                { id: 'daily-7', name: 'EP 퀘스트', completed: false, disabled: false, emphasizedParts: [] },
+                { id: 'daily-8', name: 'T 디지털 드로우', completed: false, disabled: false, emphasizedParts: [] },
+                { id: 'daily-9', name: '서버대륙 사막 - 이속칩', completed: false, disabled: false, emphasizedParts: [] },
+                { id: 'daily-10', name: '요일 던전 - 그림자 미궁', completed: false, disabled: false, emphasizedParts: [] },
+                { id: 'daily-11', name: '카이저의 영역 레이드(카영레) 티켓', completed: false, disabled: false, emphasizedParts: ['카영레'] },
+                { id: 'daily-12', name: '로얄베이스 어려움(로어) - 일일', completed: false, disabled: false, emphasizedParts: ['로어'] },
+                { id: 'daily-13', name: '파괴와 재생 (스던) - 일일', completed: false, disabled: false, emphasizedParts: ['스던'] },
             ],
             weekly: [
-                { id: 'weekly-1', name: '시즌패스 퀘스트 - 주간', completed: false, emphasizedParts: [] },
-                { id: 'weekly-2', name: '디지몬 아레나', completed: false, emphasizedParts: [] },
-                { id: 'weekly-3', name: '참치캔 던전', completed: false, emphasizedParts: [] },
-                { id: 'weekly-4', name: '로얄베이스 HARD (로어) - 주간', completed: false, emphasizedParts: ['로어'] },
-                { id: 'weekly-5', name: '파괴와 재생 (스던) - 주간', completed: false, emphasizedParts: ['스던'] },
-                { id: 'weekly-6', name: '디지몬 카이저 (메청)', completed: false, emphasizedParts: ['메청'] },
-                { id: 'weekly-7', name: '카이저의 기지 EASY (키이)', completed: false, emphasizedParts: ['키이'] },
-                { id: 'weekly-8', name: '카이저의 기지 NORMAL (키노)', completed: false, emphasizedParts: ['키노'] },
-                { id: 'weekly-9', name: '상점가 EASY (상이지)', completed: false, emphasizedParts: ['상이지'] },
-                { id: 'weekly-10', name: '상점가 NORMAL (상노)', completed: false, emphasizedParts: ['상노'] },
-                { id: 'weekly-11', name: '사성수 던전 NORMAL ~ HARD', completed: false, emphasizedParts: ['사성수'] },
-                { id: 'weekly-12', name: '황룡몬 던전 NORMAL ~ HARD (판노 ~ 판어)', completed: false, emphasizedParts: ['판노', '판어'] },
+                { id: 'weekly-1', name: '시즌패스 퀘스트 - 주간', completed: false, disabled: false, emphasizedParts: [] },
+                { id: 'weekly-2', name: '디지몬 아레나', completed: false, disabled: false, emphasizedParts: [] },
+                { id: 'weekly-3', name: '참치캔 던전', completed: false, disabled: false, emphasizedParts: [] },
+                { id: 'weekly-4', name: '로얄베이스 HARD (로어) - 주간', completed: false, disabled: false, emphasizedParts: ['로어'] },
+                { id: 'weekly-5', name: '파괴와 재생 (스던) - 주간', completed: false, disabled: false, emphasizedParts: ['스던'] },
+                { id: 'weekly-6', name: '디지몬 카이저 (메청)', completed: false, disabled: false, emphasizedParts: ['메청'] },
+                { id: 'weekly-7', name: '카이저의 기지 EASY (키이)', completed: false, disabled: false, emphasizedParts: ['키이'] },
+                { id: 'weekly-8', name: '카이저의 기지 NORMAL (키노)', completed: false, disabled: false, emphasizedParts: ['키노'] },
+                { id: 'weekly-9', name: '상점가 EASY (상이지)', completed: false, disabled: false, emphasizedParts: ['상이지'] },
+                { id: 'weekly-10', name: '상점가 NORMAL (상노)', completed: false, disabled: false, emphasizedParts: ['상노'] },
+                { id: 'weekly-11', name: '사성수 던전 NORMAL ~ HARD', completed: false, disabled: false, emphasizedParts: ['사성수'] },
+                { id: 'weekly-12', name: '황룡몬 던전 NORMAL ~ HARD (판노 ~ 판어)', completed: false, disabled: false, emphasizedParts: ['판노', '판어'] },
+                { id: 'weekly-13', name: '다크웹', completed: false, disabled: false, emphasizedParts: ['다크웹'] },
             ]
         };
 
         let quests = {};
+        let currentModalType = '';
 
         // Function to save data to local storage
         const saveQuests = () => {
@@ -115,7 +181,7 @@
             return stored ? JSON.parse(stored) : null;
         };
         
-        // Function to reset quests
+        // Function to reset only completion status
         const resetQuests = (type) => {
             if (quests[type]) {
                 quests[type] = quests[type].map(q => ({ ...q, completed: false }));
@@ -133,18 +199,27 @@
                                    now.getMonth() !== lastDailyReset.getMonth() ||
                                    now.getFullYear() !== lastDailyReset.getFullYear();
             if (isDifferentDay) {
-                resetQuests('daily');
+                // Reset only completed status
+                quests.daily.forEach(q => {
+                    q.completed = false;
+                });
                 localStorage.setItem('lastDailyReset', now.toISOString());
             }
 
             // Weekly reset (Wednesday at 06:00)
             const dayOfWeek = now.getDay();
-            const daysToAdd = (3 - dayOfWeek + 7) % 7;
-            const nextWeeklyReset = new Date(now);
-            nextWeeklyReset.setDate(now.getDate() + daysToAdd);
-            nextWeeklyReset.setHours(6, 0, 0, 0);
+            let daysUntilNextWednesday = (3 - dayOfWeek + 7) % 7;
+            if (daysUntilNextWednesday === 0 && now.getHours() >= 6) {
+                daysUntilNextWednesday = 7;
+            }
             
+            const nextWeeklyReset = new Date(now);
+            nextWeeklyReset.setDate(now.getDate() + daysUntilNextWednesday);
+            nextWeeklyReset.setHours(6, 0, 0, 0);
+            const weeklyTimeDiff = nextWeeklyReset - now;
+
             if (lastWeeklyReset < nextWeeklyReset && now > nextWeeklyReset) {
+                // Reset only completed status for weekly quests
                 resetQuests('weekly');
                 localStorage.setItem('lastWeeklyReset', now.toISOString());
             }
@@ -226,12 +301,12 @@
                 
                 hardcodedQuests.daily.forEach(q => {
                     const existing = storedQuests.daily.find(sq => sq.id === q.id);
-                    newQuests.daily.push(existing ? { ...q, completed: existing.completed } : q);
+                    newQuests.daily.push(existing ? { ...q, completed: existing.completed, disabled: existing.disabled } : q);
                 });
                 
                 hardcodedQuests.weekly.forEach(q => {
                     const existing = storedQuests.weekly.find(sq => sq.id === q.id);
-                    newQuests.weekly.push(existing ? { ...q, completed: existing.completed } : q);
+                    newQuests.weekly.push(existing ? { ...q, completed: existing.completed, disabled: existing.disabled } : q);
                 });
 
                 quests = newQuests;
@@ -256,11 +331,15 @@
             quests.daily.forEach(quest => dailyList.appendChild(createQuestItem(quest, 'daily')));
             quests.weekly.forEach(quest => weeklyList.appendChild(createQuestItem(quest, 'weekly')));
             
-            // Update counters
-            const dailyCompleted = quests.daily.filter(q => q.completed).length;
-            const weeklyCompleted = quests.weekly.filter(q => q.completed).length;
-            dailyCount.textContent = `${dailyCompleted}/${quests.daily.length}`;
-            weeklyCount.textContent = `${weeklyCompleted}/${quests.weekly.length}`;
+            // Update counters based on non-disabled quests
+            const dailyActiveQuests = quests.daily.filter(q => !q.disabled);
+            const dailyCompleted = dailyActiveQuests.filter(q => q.completed).length;
+            
+            const weeklyActiveQuests = quests.weekly.filter(q => !q.disabled);
+            const weeklyCompleted = weeklyActiveQuests.filter(q => q.completed).length;
+
+            dailyCount.textContent = `${dailyCompleted}/${dailyActiveQuests.length}`;
+            weeklyCount.textContent = `${weeklyCompleted}/${weeklyActiveQuests.length}`;
             
             saveQuests();
         };
@@ -268,21 +347,34 @@
         // Function to create quest item HTML element
         const createQuestItem = (quest, type) => {
             const li = document.createElement('li');
-            li.className = `flex items-center p-3 rounded-lg shadow-sm transition-all duration-200 cursor-pointer ${quest.completed ? 'bg-green-200 text-gray-700' : 'bg-white hover:bg-gray-100'}`;
-            li.onclick = () => toggleCompletion(quest.id, type);
+            li.className = `flex items-center p-3 rounded-lg shadow-sm transition-all duration-200`;
             
-            const span = document.createElement('span');
-            span.className = `flex-grow`;
+            // Add click event for completion toggle
+            li.onclick = () => toggleCompletion(quest.id, type);
+
+            // Add classes for styling
+            li.classList.add(quest.completed ? 'bg-green-200' : 'bg-white');
+            li.classList.add(quest.completed ? 'text-gray-700' : 'hover:bg-gray-100');
+            if (quest.disabled) {
+                li.classList.add('disabled-item');
+                li.onclick = null; // Disable the click event
+            } else {
+                li.classList.add('cursor-pointer');
+            }
+
+            const nameSpan = document.createElement('span');
+            nameSpan.className = `flex-grow`;
             
             if (quest.id === 'weekly-12') {
-                span.classList.add('text-sm');
+                nameSpan.classList.add('text-xs');
             }
 
             const parts = renderQuestNameWithEmphasis(quest.name, quest.emphasizedParts);
-            parts.forEach(p => span.appendChild(p));
+            parts.forEach(p => nameSpan.appendChild(p));
+            
+            li.appendChild(nameSpan);
 
-            li.appendChild(span);
-
+            // Completion checkmark
             if (quest.completed) {
                 const checkmarkSpan = document.createElement('span');
                 checkmarkSpan.textContent = '✓';
@@ -327,12 +419,64 @@
             if (questToToggle) {
                 questToToggle.completed = !questToToggle.completed;
                 
-                // Check if all quests of this type are now completed
-                const completedCount = quests[type].filter(q => q.completed).length;
-                if (completedCount === quests[type].length) {
+                // Check if all active quests are now completed
+                const activeQuests = quests[type].filter(q => !q.disabled);
+                const completedActiveQuests = activeQuests.filter(q => q.completed).length;
+                if (activeQuests.length > 0 && completedActiveQuests === activeQuests.length) {
                     celebrate();
                 }
 
+                renderQuests();
+            }
+        };
+
+        // Function to open the disable modal
+        const openDisableModal = (type) => {
+            currentModalType = type;
+            const modal = document.getElementById('disable-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalList = document.getElementById('modal-list');
+
+            modalTitle.textContent = `${type === 'daily' ? '일일' : '주간'} 컨텐츠 비활성 설정`;
+            modalList.innerHTML = '';
+            
+            quests[type].forEach(quest => {
+                const item = document.createElement('div');
+                item.className = 'flex items-center';
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = quest.disabled;
+                checkbox.id = `disable-${quest.id}`;
+                checkbox.className = 'mr-2 h-4 w-4 text-blue-600 rounded focus:ring-blue-500 cursor-pointer';
+
+                const label = document.createElement('label');
+                label.htmlFor = `disable-${quest.id}`;
+                label.textContent = quest.name;
+                label.className = 'flex-grow text-sm cursor-pointer';
+
+                checkbox.onchange = () => toggleDisable(quest.id, type);
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                modalList.appendChild(item);
+            });
+
+            modal.classList.remove('hidden');
+        };
+        
+        // Function to close the disable modal
+        const closeDisableModal = () => {
+            document.getElementById('disable-modal').classList.add('hidden');
+        };
+
+        // Function to toggle disable status from the modal
+        const toggleDisable = (id, type) => {
+            const questToToggle = quests[type].find(q => q.id === id);
+            if (questToToggle) {
+                questToToggle.disabled = !questToToggle.disabled;
+                if (questToToggle.disabled) {
+                    questToToggle.completed = false;
+                }
                 renderQuests();
             }
         };
