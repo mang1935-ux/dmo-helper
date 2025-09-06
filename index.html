@@ -79,6 +79,15 @@
             .mobile-br {
                 display: block;
             }
+            /* 모바일에서만 제목 가운데 정렬 */
+            .mobile-center-title {
+                text-align: center;
+                padding-right: 0 !important;
+            }
+            /* 모바일에서 버튼 폰트 크기 조정 */
+            .mobile-no-wrap {
+                white-space: nowrap;
+            }
         }
         @media (min-width: 640px) { /* sm breakpoint 이상일 때 */
             .mobile-br {
@@ -97,8 +106,8 @@
                 Made by. <span class="font-extrabold text-blue-800">짠밤</span><span class="text-xxxs">, from <span class="font-bold danbam-green text-xxs">단밤</span> Guild</span>
             </div>
             
-            <!-- 타이틀 (중앙에서 살짝 좌측으로 조정) -->
-            <h1 class="text-3xl font-bold text-blue-800 text-center flex-grow pr-4">디지몬마스터즈<span class="mobile-br"></span> 컨텐츠 도우미</h1>
+            <!-- 타이틀 (중앙 정렬) -->
+            <h1 class="text-3xl font-bold text-blue-800 text-center flex-grow sm:pr-4 mobile-center-title">디지몬마스터즈<span class="mobile-br"></span> 컨텐츠 도우미</h1>
 
             <!-- 타이머 컨테이너 (우측) -->
             <div class="text-xs text-gray-600 mt-2 sm:mt-0 flex flex-col gap-1 flex-shrink-0">
@@ -119,7 +128,7 @@
             <div class="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200 flex flex-col">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold text-gray-800">일일 컨텐츠 (<span id="daily-count">0/13</span>)</h2>
-                    <button id="daily-disable-btn" onclick="openDisableModal('daily')" class="text-xs text-white bg-blue-500 hover:bg-blue-600 rounded-lg px-2 py-1 transition-colors duration-200">비활성 설정</button>
+                    <button id="daily-disable-btn" onclick="openDisableModal('daily')" class="text-xs text-white bg-blue-500 hover:bg-blue-600 rounded-lg px-2 py-1 transition-colors duration-200 mobile-no-wrap">비활성 설정</button>
                 </div>
                 <ul id="daily-quest-list" class="flex flex-col flex-grow justify-between gap-3">
                     <!-- 퀘스트 아이템이 여기에 렌더링됩니다 -->
@@ -130,7 +139,7 @@
             <div class="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200 flex flex-col">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold text-gray-800">주간 컨텐츠 (<span id="weekly-count">0/13</span>)</h2>
-                    <button id="weekly-disable-btn" onclick="openDisableModal('weekly')" class="text-xs text-white bg-blue-500 hover:bg-blue-600 rounded-lg px-2 py-1 transition-colors duration-200">비활성 설정</button>
+                    <button id="weekly-disable-btn" onclick="openDisableModal('weekly')" class="text-xs text-white bg-blue-500 hover:bg-blue-600 rounded-lg px-2 py-1 transition-colors duration-200 mobile-no-wrap">비활성 설정</button>
                 </div>
                 <ul id="weekly-quest-list" class="flex flex-col flex-grow gap-3">
                     <!-- 퀘스트 아이템이 여기에 렌더링됩니다 -->
