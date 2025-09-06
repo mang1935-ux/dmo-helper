@@ -74,6 +74,17 @@
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
         }
+        /* 모바일에서만 줄바꿈 적용 */
+        @media (max-width: 639px) { /* sm breakpoint보다 작을 때 */
+            .mobile-br {
+                display: block;
+            }
+        }
+        @media (min-width: 640px) { /* sm breakpoint 이상일 때 */
+            .mobile-br {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body class="p-4 sm:p-8 bg-gray-100 min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-200 to-indigo-200">
@@ -87,7 +98,7 @@
             </div>
             
             <!-- 타이틀 (중앙에서 살짝 좌측으로 조정) -->
-            <h1 class="text-3xl font-bold text-blue-800 text-center flex-grow pr-4">디지몬마스터즈 컨텐츠 도우미</h1>
+            <h1 class="text-3xl font-bold text-blue-800 text-center flex-grow pr-4">디지몬마스터즈<span class="mobile-br"></span> 컨텐츠 도우미</h1>
 
             <!-- 타이머 컨테이너 (우측) -->
             <div class="text-xs text-gray-600 mt-2 sm:mt-0 flex flex-col gap-1 flex-shrink-0">
