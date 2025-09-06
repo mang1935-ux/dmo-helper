@@ -81,17 +81,25 @@
     <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-4xl relative">
         <!-- 상단 레이아웃을 위한 새로운 컨테이너 -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-            <!-- 만든사람 저작권 표기 -->
-            <div class="text-xs text-gray-600 mb-2 sm:mb-0">
+            <!-- 만든사람 저작권 표기 (좌측) -->
+            <div class="text-xs text-gray-600 mb-2 sm:mb-0 whitespace-nowrap flex-shrink-0">
                 Made by. <span class="font-extrabold text-blue-800">짠밤</span><span class="text-xxxs">, from <span class="font-bold danbam-green text-xxs">단밤</span> Guild</span>
             </div>
             
-            <h1 class="text-3xl font-bold text-blue-800 text-center flex-grow">디지몬마스터즈 컨텐츠 도우미</h1>
+            <!-- 타이틀 (중앙에서 살짝 좌측으로 조정) -->
+            <h1 class="text-3xl font-bold text-blue-800 text-center flex-grow pr-4">디지몬마스터즈 컨텐츠 도우미</h1>
 
-            <!-- 타이머 컨테이너 -->
-            <div class="text-right text-sm text-gray-600 mt-2 sm:mt-0 ml-auto">
-                <div id="daily-timer"></div>
-                <div id="weekly-timer"></div>
+            <!-- 타이머 컨테이너 (우측) -->
+            <div class="text-xs text-gray-600 mt-2 sm:mt-0 flex flex-col gap-1 flex-shrink-0">
+                <!-- 타이머를 두 개의 요소로 분리하여 정렬 문제 해결 -->
+                <div class="flex justify-between items-center w-full min-w-[120px]">
+                    <span>일일 초기화:</span>
+                    <span id="daily-timer" class="text-right"></span>
+                </div>
+                <div class="flex justify-between items-center w-full min-w-[120px]">
+                    <span>주간 초기화:</span>
+                    <span id="weekly-timer" class="text-right"></span>
+                </div>
             </div>
         </div>
 
@@ -242,7 +250,8 @@
             const dailyMinutes = Math.floor((dailyTimeDiff % (1000 * 60 * 60)) / (1000 * 60));
             const dailySeconds = Math.floor((dailyTimeDiff % (1000 * 60)) / 1000);
             
-            document.getElementById('daily-timer').textContent = `일일 초기화: ${String(dailyHours).padStart(2, '0')}:${String(dailyMinutes).padStart(2, '0')}:${String(dailySeconds).padStart(2, '0')}`;
+            // Update only the time span
+            document.getElementById('daily-timer').textContent = `${String(dailyHours).padStart(2, '0')}:${String(dailyMinutes).padStart(2, '0')}:${String(dailySeconds).padStart(2, '0')}`;
 
             // Weekly timer calculation (Wednesday at 06:00)
             const dayOfWeek = now.getDay();
@@ -256,12 +265,12 @@
             nextWeeklyReset.setHours(6, 0, 0, 0);
             const weeklyTimeDiff = nextWeeklyReset - now;
 
-            const weeklyDays = Math.floor(weeklyTimeDiff / (1000 * 60 * 60 * 24));
-            const weeklyHours = Math.floor((weeklyTimeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            // 주간 타이머를 시 단위로 합산하여 표시
+            const totalWeeklyHours = Math.floor(weeklyTimeDiff / (1000 * 60 * 60));
             const weeklyMinutes = Math.floor((weeklyTimeDiff % (1000 * 60 * 60)) / (1000 * 60));
             const weeklySeconds = Math.floor((weeklyTimeDiff % (1000 * 60)) / 1000);
             
-            document.getElementById('weekly-timer').textContent = `주간 초기화: ${weeklyDays}일 ${String(weeklyHours).padStart(2, '0')}:${String(weeklyMinutes).padStart(2, '0')}:${String(weeklySeconds).padStart(2, '0')}`;
+            document.getElementById('weekly-timer').textContent = `${String(totalWeeklyHours).padStart(2, '0')}:${String(weeklyMinutes).padStart(2, '0')}:${String(weeklySeconds).padStart(2, '0')}`;
         };
 
         // Function to celebrate with a more spectacular animation
