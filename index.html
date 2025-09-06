@@ -79,18 +79,21 @@
 <body class="p-4 sm:p-8 bg-gray-100 min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-200 to-indigo-200">
 
     <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-4xl relative">
-        <!-- 만든사람 저작권 표기 -->
-        <div class="absolute top-4 left-4 text-xs text-gray-600">
-            Made by. <span class="font-extrabold text-blue-800">짠밤</span><span class="text-xxxs">, from <span class="font-bold danbam-green text-xxs">단밤</span> Guild</span>
-        </div>
+        <!-- 상단 레이아웃을 위한 새로운 컨테이너 -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+            <!-- 만든사람 저작권 표기 -->
+            <div class="text-xs text-gray-600 mb-2 sm:mb-0">
+                Made by. <span class="font-extrabold text-blue-800">짠밤</span><span class="text-xxxs">, from <span class="font-bold danbam-green text-xxs">단밤</span> Guild</span>
+            </div>
+            
+            <h1 class="text-3xl font-bold text-blue-800 text-center flex-grow">디지몬마스터즈 컨텐츠 도우미</h1>
 
-        <!-- 타이머 컨테이너 -->
-        <div class="absolute top-4 right-4 text-right text-sm text-gray-600 space-y-1">
-            <div id="daily-timer"></div>
-            <div id="weekly-timer"></div>
+            <!-- 타이머 컨테이너 -->
+            <div class="text-right text-sm text-gray-600 mt-2 sm:mt-0 ml-auto">
+                <div id="daily-timer"></div>
+                <div id="weekly-timer"></div>
+            </div>
         </div>
-        
-        <h1 class="text-3xl font-bold text-center text-blue-800 mb-6">디지몬마스터즈 컨텐츠 도우미</h1>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <!-- 일일 컨텐츠 목록 -->
