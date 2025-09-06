@@ -84,10 +84,10 @@
                 text-align: center;
                 padding-right: 0 !important;
             }
-            /* 모바일에서 버튼 폰트 크기 조정 */
-            .mobile-no-wrap {
-                white-space: nowrap;
-            }
+        }
+        /* 모든 화면에서 줄바꿈 방지 */
+        .no-wrap {
+            white-space: nowrap;
         }
         @media (min-width: 640px) { /* sm breakpoint 이상일 때 */
             .mobile-br {
@@ -128,7 +128,7 @@
             <div class="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200 flex flex-col">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold text-gray-800">일일 컨텐츠 (<span id="daily-count">0/13</span>)</h2>
-                    <button id="daily-disable-btn" onclick="openDisableModal('daily')" class="text-xs text-white bg-blue-500 hover:bg-blue-600 rounded-lg px-2 py-1 transition-colors duration-200 mobile-no-wrap">비활성 설정</button>
+                    <button id="daily-disable-btn" onclick="openDisableModal('daily')" class="text-xs text-white bg-blue-500 hover:bg-blue-600 rounded-lg px-2 py-1 transition-colors duration-200 no-wrap">비활성 설정</button>
                 </div>
                 <ul id="daily-quest-list" class="flex flex-col flex-grow justify-between gap-3">
                     <!-- 퀘스트 아이템이 여기에 렌더링됩니다 -->
@@ -138,8 +138,8 @@
             <!-- 주간 컨텐츠 목록 -->
             <div class="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200 flex flex-col">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-2xl font-bold text-gray-800">주간 컨텐츠 (<span id="weekly-count">0/13</span>)</h2>
-                    <button id="weekly-disable-btn" onclick="openDisableModal('weekly')" class="text-xs text-white bg-blue-500 hover:bg-blue-600 rounded-lg px-2 py-1 transition-colors duration-200 mobile-no-wrap">비활성 설정</button>
+                    <h2 class="text-2xl font-bold text-gray-800">주간 컨텐츠 (<span id="weekly-count">0/15</span>)</h2>
+                    <button id="weekly-disable-btn" onclick="openDisableModal('weekly')" class="text-xs text-white bg-blue-500 hover:bg-blue-600 rounded-lg px-2 py-1 transition-colors duration-200 no-wrap">비활성 설정</button>
                 </div>
                 <ul id="weekly-quest-list" class="flex flex-col flex-grow gap-3">
                     <!-- 퀘스트 아이템이 여기에 렌더링됩니다 -->
@@ -168,15 +168,16 @@
         const hardcodedQuests = {
             daily: [
                 { id: 'daily-1', name: '할배몬의 럭키 박스', completed: false, disabled: false, emphasizedParts: [] },
-                { id: 'daily-2', name: '일일 출석', completed: false, disabled: false, emphasizedParts: [] },
-                { id: 'daily-4', name: '이벤트 출석 (06시 초기화)', completed: false, disabled: false, emphasizedParts: [] },
-                { id: 'daily-3', name: '접속시간 보상', completed: false, disabled: false, emphasizedParts: [] },
+                { id: 'daily-3', name: '접속시간 이벤트', completed: false, disabled: false, emphasizedParts: [] },
+                { id: 'daily-2', name: '출석체크 이벤트', completed: false, disabled: false, emphasizedParts: [] },
+                // 일일 출석부 이벤트 초기화 시간을 00시로 통일하기 위해 항목의 이름을 수정합니다.
+                { id: 'daily-4', name: '일일 출석부 이벤트 (06시 초기화)', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-5', name: '간쿠몬의 수련장', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-6', name: '시즌패스 퀘스트 - 일일', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-7', name: 'EP 퀘스트', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-8', name: 'T 디지털 드로우', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-9', name: '서버대륙 사막 - 이속칩', completed: false, disabled: false, emphasizedParts: [] },
-                { id: 'daily-10', name: '요일 던전 - 그림자 미궁', completed: false, disabled: false, emphasizedParts: [] },
+                { id: 'daily-10', name: '요일 던전 (요던) - 그림자 미궁', completed: false, disabled: false, emphasizedParts: ['요던'] },
                 { id: 'daily-11', name: '카이저의 영역 레이드(카영레) 티켓', completed: false, disabled: false, emphasizedParts: ['카영레'] },
                 { id: 'daily-12', name: '로얄베이스 어려움(로어) - 일일', completed: false, disabled: false, emphasizedParts: ['로어'] },
                 { id: 'daily-13', name: '파괴와 재생 (스던) - 일일', completed: false, disabled: false, emphasizedParts: ['스던'] },
@@ -184,7 +185,7 @@
             weekly: [
                 { id: 'weekly-1', name: '시즌패스 퀘스트 - 주간', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'weekly-2', name: '디지몬 아레나', completed: false, disabled: false, emphasizedParts: [] },
-                { id: 'weekly-3', name: '참치캔 던전', completed: false, disabled: false, emphasizedParts: [] },
+                { id: 'weekly-3', name: '요코하마 비밀공원 (참치캔)', completed: false, disabled: false, emphasizedParts: ['참치캔'] },
                 { id: 'weekly-4', name: '로얄베이스 HARD (로어) - 주간', completed: false, disabled: false, emphasizedParts: ['로어'] },
                 { id: 'weekly-5', name: '파괴와 재생 (스던) - 주간', completed: false, disabled: false, emphasizedParts: ['스던'] },
                 { id: 'weekly-6', name: '디지몬 카이저 (메청)', completed: false, disabled: false, emphasizedParts: ['메청'] },
@@ -192,9 +193,11 @@
                 { id: 'weekly-8', name: '카이저의 기지 NORMAL (키노)', completed: false, disabled: false, emphasizedParts: ['키노'] },
                 { id: 'weekly-9', name: '상점가 EASY (상이지)', completed: false, disabled: false, emphasizedParts: ['상이지'] },
                 { id: 'weekly-10', name: '상점가 NORMAL (상노)', completed: false, disabled: false, emphasizedParts: ['상노'] },
-                { id: 'weekly-11', name: '사성수 던전 NORMAL ~ HARD', completed: false, disabled: false, emphasizedParts: ['사성수'] },
-                { id: 'weekly-12', name: '황룡몬 던전 NORMAL ~ HARD (판노 ~ 판어)', completed: false, disabled: false, emphasizedParts: ['판노', '판어'] },
-                { id: 'weekly-13', name: '다크웹', completed: false, disabled: false, emphasizedParts: ['다크웹'] },
+                { id: 'weekly-11', name: '사성수 던전 NORMAL', completed: false, disabled: false, emphasizedParts: ['사성수'] },
+                { id: 'weekly-12', name: '사성수 던전 HARD', completed: false, disabled: false, emphasizedParts: ['사성수'] },
+                { id: 'weekly-13', name: '황룡몬 던전 NORMAL (판노)', completed: false, disabled: false, emphasizedParts: ['판노'] },
+                { id: 'weekly-14', name: '황룡몬 던전 HARD (판어)', completed: false, disabled: false, emphasizedParts: ['판어'] },
+                { id: 'weekly-15', name: '다크웹 NORMAL', completed: false, disabled: false, emphasizedParts: ['다크웹'] },
             ]
         };
 
@@ -380,6 +383,11 @@
         const createQuestItem = (quest, type) => {
             const li = document.createElement('li');
             li.className = `flex items-center p-3 rounded-lg shadow-sm transition-all duration-200 cursor-pointer`;
+            
+            // Add specific class for the long name item
+            if (quest.id === 'weekly-13' || quest.id === 'weekly-14') {
+                li.classList.add('no-wrap');
+            }
             
             // Add click event for completion toggle
             li.onclick = () => toggleCompletion(quest.id, type);
