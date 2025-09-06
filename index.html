@@ -397,10 +397,8 @@
             const nameSpan = document.createElement('span');
             nameSpan.className = `flex-grow`;
             
-            if (quest.id === 'weekly-12') {
-                nameSpan.classList.add('text-xs');
-            }
-
+            // Removed specific font size for 'weekly-12' quest to make all items uniform.
+            
             const parts = renderQuestNameWithEmphasis(quest.name, quest.emphasizedParts);
             parts.forEach(p => nameSpan.appendChild(p));
             
