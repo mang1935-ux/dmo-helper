@@ -379,7 +379,7 @@
         // Function to create quest item HTML element
         const createQuestItem = (quest, type) => {
             const li = document.createElement('li');
-            li.className = `flex items-center p-3 rounded-lg shadow-sm transition-all duration-200`;
+            li.className = `flex items-center p-3 rounded-lg shadow-sm transition-all duration-200 cursor-pointer`;
             
             // Add click event for completion toggle
             li.onclick = () => toggleCompletion(quest.id, type);
@@ -397,20 +397,17 @@
             const nameSpan = document.createElement('span');
             nameSpan.className = `flex-grow`;
             
-            // Removed specific font size for 'weekly-12' quest to make all items uniform.
-            
             const parts = renderQuestNameWithEmphasis(quest.name, quest.emphasizedParts);
             parts.forEach(p => nameSpan.appendChild(p));
             
             li.appendChild(nameSpan);
 
-            // Completion checkmark
-            if (quest.completed) {
-                const checkmarkSpan = document.createElement('span');
-                checkmarkSpan.textContent = '✓';
-                checkmarkSpan.className = 'ml-auto text-xl text-green-600 font-bold';
-                li.appendChild(checkmarkSpan);
-            }
+            // Always create the checkmark span, and control visibility with opacity
+            const checkmarkSpan = document.createElement('span');
+            checkmarkSpan.textContent = '✓';
+            // Use a fixed width to prevent layout shift and a transition for smooth effect
+            checkmarkSpan.className = `ml-auto text-xl text-green-600 font-bold w-6 text-center transition-opacity duration-200 ${quest.completed ? 'opacity-100' : 'opacity-0'}`;
+            li.appendChild(checkmarkSpan);
 
             return li;
         };
