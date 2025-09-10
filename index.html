@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <link rel="icon" href="/favicon.png" type="image/png">
-    <link rel="shortcut icon" href="/favicon.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>디지몬마스터즈 컨텐츠 도우미</title>
@@ -173,7 +171,7 @@
                 { id: 'daily-3', name: '접속시간 이벤트', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-2', name: '출석체크 이벤트', completed: false, disabled: false, emphasizedParts: [] },
                 // 일일 출석부 이벤트 초기화 시간을 00시로 통일하기 위해 항목의 이름을 수정합니다.
-                { id: 'daily-4', name: '일일 출석부 이벤트 (06시 초기화)', completed: false, disabled: false, emphasizedParts: [] },
+                { id: 'daily-4', name: '일일 출석부 이벤트', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-5', name: '간쿠몬의 수련장', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-6', name: '시즌패스 퀘스트 - 일일', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-7', name: 'EP 퀘스트', completed: false, disabled: false, emphasizedParts: [] },
@@ -224,18 +222,18 @@
             }
         };
 
-        // Automatic reset logic
+        // Automatic reset logic (수정된 부분)
         const handleAutoReset = () => {
             const now = new Date();
             const lastDailyReset = new Date(localStorage.getItem('lastDailyReset') || 0);
             const lastWeeklyReset = new Date(localStorage.getItem('lastWeeklyReset') || 0);
             
             // Daily reset (at 00:00)
-            const isDifferentDay = now.getDate() !== lastDailyReset.getDate() ||
-                                   now.getMonth() !== lastDailyReset.getMonth() ||
-                                   now.getFullYear() !== lastDailyReset.getFullYear();
-            if (isDifferentDay) {
-                // Reset only completed status
+            const dailyResetTime = new Date(now);
+            dailyResetTime.setHours(0, 0, 0, 0);
+            
+            // 오늘 자정(dailyResetTime)이 마지막 일일 초기화 시간보다 미래라면 초기화
+            if (dailyResetTime.getTime() > lastDailyReset.getTime()) {
                 quests.daily.forEach(q => {
                     q.completed = false;
                 });
@@ -243,19 +241,14 @@
             }
 
             // Weekly reset (Wednesday at 06:00)
-            const dayOfWeek = now.getDay();
-            let daysUntilNextWednesday = (3 - dayOfWeek + 7) % 7;
-            if (daysUntilNextWednesday === 0 && now.getHours() >= 6) {
-                daysUntilNextWednesday = 7;
-            }
-            
-            const nextWeeklyReset = new Date(now);
-            nextWeeklyReset.setDate(now.getDate() + daysUntilNextWednesday);
-            nextWeeklyReset.setHours(6, 0, 0, 0);
-            const weeklyTimeDiff = nextWeeklyReset - now;
+            const weeklyResetTime = new Date(now);
+            const dayOfWeek = weeklyResetTime.getDay(); // Sunday - 0, ... Wednesday - 3
+            let daysSinceWednesday = (dayOfWeek - 3 + 7) % 7;
+            weeklyResetTime.setDate(now.getDate() - daysSinceWednesday);
+            weeklyResetTime.setHours(6, 0, 0, 0);
 
-            if (lastWeeklyReset < nextWeeklyReset && now > nextWeeklyReset) {
-                // Reset only completed status for weekly quests
+            // 현재 시간이 이번 주 수요일 오전 6시 이후이고, 마지막 주간 초기화 시간이 이 시간보다 과거라면 초기화
+            if (now.getTime() >= weeklyResetTime.getTime() && lastWeeklyReset.getTime() < weeklyResetTime.getTime()) {
                 resetQuests('weekly');
                 localStorage.setItem('lastWeeklyReset', now.toISOString());
             }
@@ -526,6 +519,3 @@
     </script>
 </body>
 </html>
-
-
-
