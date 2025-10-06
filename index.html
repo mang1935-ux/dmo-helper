@@ -99,19 +99,14 @@
 <body class="p-4 sm:p-8 bg-gray-100 min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-200 to-indigo-200">
 
     <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-4xl relative">
-        <!-- 상단 레이아웃을 위한 새로운 컨테이너 -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-            <!-- 만든사람 저작권 표기 (좌측) -->
             <div class="text-xs text-gray-600 mb-2 sm:mb-0 whitespace-nowrap flex-shrink-0">
                 Made by. <span class="font-extrabold text-blue-800">짠밤</span><span class="text-xxxs">, from <span class="font-bold danbam-green text-xxs">단밤</span> Guild</span>
             </div>
             
-            <!-- 타이틀 (중앙 정렬) -->
             <h1 class="text-3xl font-bold text-blue-800 text-center flex-grow sm:pr-4 mobile-center-title">디지몬마스터즈<span class="mobile-br"></span> 컨텐츠 도우미</h1>
 
-            <!-- 타이머 컨테이너 (우측) -->
             <div class="text-xs text-gray-600 mt-2 sm:mt-0 flex flex-col gap-1 flex-shrink-0">
-                <!-- 타이머를 두 개의 요소로 분리하여 정렬 문제 해결 -->
                 <div class="flex justify-between items-center w-full min-w-[120px]">
                     <span>일일 초기화:</span>
                     <span id="daily-timer" class="text-right"></span>
@@ -124,30 +119,24 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- 일일 컨텐츠 목록 -->
             <div class="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200 flex flex-col">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold text-gray-800">일일 컨텐츠 (<span id="daily-count">0/13</span>)</h2>
                     <button id="daily-disable-btn" onclick="openDisableModal('daily')" class="text-xs text-white bg-blue-500 hover:bg-blue-600 rounded-lg px-2 py-1 transition-colors duration-200 no-wrap">비활성 설정</button>
                 </div>
                 <ul id="daily-quest-list" class="flex flex-col flex-grow justify-between gap-3">
-                    <!-- 퀘스트 아이템이 여기에 렌더링됩니다 -->
-                </ul>
+                    </ul>
             </div>
 
-            <!-- 주간 컨텐츠 목록 -->
             <div class="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200 flex flex-col">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-2xl font-bold text-gray-800">주간 컨텐츠 (<span id="weekly-count">0/15</span>)</h2>
-                    <button id="weekly-disable-btn" onclick="openDisableModal('weekly')" class="text-xs text-white bg-blue-500 hover:bg-blue-600 rounded-lg px-2 py-1 transition-colors duration-200 no-wrap">비활성 설정</button>
+                    <h2 class="text-2xl font-bold text-gray-800">주간 컨텐츠 (<span id="weekly-count">0/16</span>)</h2> <button id="weekly-disable-btn" onclick="openDisableModal('weekly')" class="text-xs text-white bg-blue-500 hover:bg-blue-600 rounded-lg px-2 py-1 transition-colors duration-200 no-wrap">비활성 설정</button>
                 </div>
                 <ul id="weekly-quest-list" class="flex flex-col flex-grow gap-3">
-                    <!-- 퀘스트 아이템이 여기에 렌더링됩니다 -->
-                </ul>
+                    </ul>
             </div>
         </div>
 
-        <!-- Modal for disabling quests -->
         <div id="disable-modal" class="modal-overlay hidden">
             <div class="modal-content">
                 <div class="flex justify-between items-center mb-4">
@@ -155,8 +144,7 @@
                     <button onclick="closeDisableModal()" class="text-gray-500 hover:text-gray-700 text-2xl font-bold">&times;</button>
                 </div>
                 <div id="modal-list" class="space-y-2">
-                    <!-- Checkbox list will be rendered here -->
-                </div>
+                    </div>
                 <button onclick="closeDisableModal()" class="mt-6 w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200">닫기</button>
             </div>
         </div>
@@ -198,6 +186,8 @@
                 { id: 'weekly-13', name: '황룡몬 던전 NORMAL (판노)', completed: false, disabled: false, emphasizedParts: ['판노'] },
                 { id: 'weekly-14', name: '황룡몬 던전 HARD (판어)', completed: false, disabled: false, emphasizedParts: ['판어'] },
                 { id: 'weekly-15', name: '다크웹 NORMAL', completed: false, disabled: false, emphasizedParts: ['다크웹'] },
+                // 네버랜드 항목은 그대로 유지되며, 총 16개 항목입니다.
+                { id: 'weekly-16', name: '네버랜드 NORMAL', completed: false, disabled: false, emphasizedParts: ['네버랜드'] }, 
             ]
         };
 
@@ -222,7 +212,7 @@
             }
         };
 
-        // Automatic reset logic (수정된 부분)
+        // Automatic reset logic (재검토 및 확인)
         const handleAutoReset = () => {
             const now = new Date();
             const lastDailyReset = new Date(localStorage.getItem('lastDailyReset') || 0);
@@ -230,27 +220,30 @@
             
             // Daily reset (at 00:00)
             const dailyResetTime = new Date(now);
-            dailyResetTime.setHours(0, 0, 0, 0);
+            dailyResetTime.setHours(0, 0, 0, 0); // 오늘 자정 00:00
             
-            // 오늘 자정(dailyResetTime)이 마지막 일일 초기화 시간보다 미래라면 초기화
-            if (dailyResetTime.getTime() > lastDailyReset.getTime()) {
-                quests.daily.forEach(q => {
-                    q.completed = false;
-                });
-                localStorage.setItem('lastDailyReset', now.toISOString());
+            // 현재 시간이 00:00보다 크거나 같고, 마지막 초기화 시간이 오늘 자정보다 과거라면 초기화
+            if (now.getTime() >= dailyResetTime.getTime() && lastDailyReset.getTime() < dailyResetTime.getTime()) {
+                 resetQuests('daily');
+                 localStorage.setItem('lastDailyReset', dailyResetTime.toISOString());
             }
 
             // Weekly reset (Wednesday at 06:00)
-            const weeklyResetTime = new Date(now);
-            const dayOfWeek = weeklyResetTime.getDay(); // Sunday - 0, ... Wednesday - 3
-            let daysSinceWednesday = (dayOfWeek - 3 + 7) % 7;
-            weeklyResetTime.setDate(now.getDate() - daysSinceWednesday);
-            weeklyResetTime.setHours(6, 0, 0, 0);
+            const weeklyResetDay = 3; // Wednesday
+            const weeklyResetHour = 6;
+            const dayOfWeek = now.getDay(); // Sunday - 0, ... Wednesday - 3
+
+            // 현재 주간의 수요일 06:00 시점을 계산
+            const daysSinceWednesday = (dayOfWeek - weeklyResetDay + 7) % 7;
+            const currentWeeklyReset = new Date(now);
+            currentWeeklyReset.setDate(now.getDate() - daysSinceWednesday);
+            currentWeeklyReset.setHours(weeklyResetHour, 0, 0, 0);
 
             // 현재 시간이 이번 주 수요일 오전 6시 이후이고, 마지막 주간 초기화 시간이 이 시간보다 과거라면 초기화
-            if (now.getTime() >= weeklyResetTime.getTime() && lastWeeklyReset.getTime() < weeklyResetTime.getTime()) {
+            if (now.getTime() >= currentWeeklyReset.getTime() && lastWeeklyReset.getTime() < currentWeeklyReset.getTime()) {
                 resetQuests('weekly');
-                localStorage.setItem('lastWeeklyReset', now.toISOString());
+                // 초기화 시점을 currentWeeklyReset으로 기록
+                localStorage.setItem('lastWeeklyReset', currentWeeklyReset.toISOString()); 
             }
         };
 
@@ -273,14 +266,17 @@
 
             // Weekly timer calculation (Wednesday at 06:00)
             const dayOfWeek = now.getDay();
-            let daysUntilNextWednesday = (3 - dayOfWeek + 7) % 7;
-            if (daysUntilNextWednesday === 0 && now.getHours() >= 6) {
+            const weeklyResetDay = 3; // Wednesday
+            const weeklyResetHour = 6;
+
+            let daysUntilNextWednesday = (weeklyResetDay - dayOfWeek + 7) % 7;
+            if (daysUntilNextWednesday === 0 && now.getHours() >= weeklyResetHour) {
                 daysUntilNextWednesday = 7;
             }
             
             const nextWeeklyReset = new Date(now);
             nextWeeklyReset.setDate(now.getDate() + daysUntilNextWednesday);
-            nextWeeklyReset.setHours(6, 0, 0, 0);
+            nextWeeklyReset.setHours(weeklyResetHour, 0, 0, 0);
             const weeklyTimeDiff = nextWeeklyReset - now;
 
             // 주간 타이머를 시 단위로 합산하여 표시
@@ -329,13 +325,17 @@
             if (storedQuests) {
                 const newQuests = { daily: [], weekly: [] };
                 
+                // 일일 퀘스트 동기화 (새로운 항목 추가 및 기존 항목 유지)
                 hardcodedQuests.daily.forEach(q => {
                     const existing = storedQuests.daily.find(sq => sq.id === q.id);
                     newQuests.daily.push(existing ? { ...q, completed: existing.completed, disabled: existing.disabled } : q);
                 });
                 
+                // 주간 퀘스트 동기화 (새로운 항목 추가 및 기존 항목 유지)
                 hardcodedQuests.weekly.forEach(q => {
                     const existing = storedQuests.weekly.find(sq => sq.id === q.id);
+                    // 네버랜드 항목은 ID가 weekly-16으로 고정되어 있으므로, 이전 데이터와 병합 시 ID 기준으로 처리합니다.
+                    // 만약 이름만 바뀌고 ID가 같으면 기존 완료/비활성화 상태를 유지합니다.
                     newQuests.weekly.push(existing ? { ...q, completed: existing.completed, disabled: existing.disabled } : q);
                 });
 
@@ -344,7 +344,7 @@
                 quests = JSON.parse(JSON.stringify(hardcodedQuests));
             }
             
-            handleAutoReset();
+            handleAutoReset(); // 로드 후 자동 초기화 확인
             renderQuests();
         };
 
@@ -380,7 +380,7 @@
             li.className = `flex items-center p-3 rounded-lg shadow-sm transition-all duration-200 cursor-pointer`;
             
             // Add specific class for the long name item
-            if (quest.id === 'weekly-13' || quest.id === 'weekly-14') {
+            if (quest.id === 'weekly-13' || quest.id === 'weekly-14' || quest.id === 'weekly-16') {
                 li.classList.add('no-wrap');
             }
             
