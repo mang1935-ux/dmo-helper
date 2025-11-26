@@ -63,14 +63,15 @@
             margin: 0; 
         }
         
-        /* 메인 타이틀 중앙 정렬 (Absolute Positioning) */
+        /* 🚨🚨🚨 타이틀 중앙 정렬 수정 부분 🚨🚨🚨 */
         .main-title-wrapper {
             position: absolute; /* 절대 위치 */
-            left: 50%; /* 부모 요소의 50% 지점 */
-            transform: translateX(-50%); /* 자기 너비의 50%만큼 왼쪽으로 이동하여 정확히 중앙 정렬 */
-            width: auto; /* 내용에 맞게 너비 자동 조절 */
-            text-align: center; /* 텍스트 자체는 중앙 정렬 */
-            z-index: 10; /* 다른 요소들 위에 표시 */
+            top: 50%; /* 수직 중앙 정렬 시작점 */
+            left: 50%; /* 수평 중앙 정렬 시작점 */
+            transform: translate(-50%, -50%); /* 자기 너비/높이의 50%만큼 이동하여 정확히 중앙 정렬 */
+            width: auto; 
+            text-align: center; 
+            z-index: 10; 
         }
 
         .header-layout {
@@ -90,23 +91,24 @@
         
         /* 타이머 영역 최소 너비 축소 */
         .timer-area {
-            min-width: 130px; 
+            min-width: 135px; /* 타이머 정렬을 위해 너비 확장 (70px + 4px + 55px) */
             font-size: 0.7rem; 
             flex-shrink: 0;
         }
 
-        /* 타이머 내부 간격 조정 클래스 */
+        /* 타이머 내부 간격 조정 클래스 - 이전 수정 유지 */
         .timer-row {
             display: grid;
-            /* 1열: 콘텐츠 너비만 사용, 2열: 시간 고정 너비 (45px) */
-            grid-template-columns: max-content 45px; 
-            gap: 0; /* Grid 간격은 0으로 유지 */
+            /* 1열: 라벨 고정 너비 (70px), 2열: 시간 고정 너비 (55px) */
+            grid-template-columns: 70px 55px; 
+            gap: 4px; /* 라벨과 시간 사이의 간격 */
             align-items: center;
         }
         
-        /* 첫 번째 열에 패딩을 주어 미세 간격 조정 (스페이스바 1칸 정도) */
+        /* 첫 번째 열(라벨)을 오른쪽 정렬하여 시간과 붙도록 설정 */
         .timer-row > span:first-child {
-            padding-right: 4px; 
+            padding-right: 0; /* 기존 패딩 제거 */
+            text-align: right; 
         }
 
         /* 시간 텍스트가 오른쪽 정렬되도록 명시 */
@@ -229,7 +231,7 @@
                 min-width: 110px; 
             }
             .timer-area {
-                min-width: 130px; 
+                min-width: 140px; /* PC 환경에서도 충분한 공간 확보 */
             }
              .quest-list-panel h2 {
                 font-size: 1.75rem; 
@@ -335,7 +337,6 @@
                 { id: 'daily-4', name: '일일 출석부 이벤트', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-5', name: '간쿠몬의 수련장', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-6', name: '시즌패스 퀘스트 - 일일', completed: false, disabled: false, emphasizedParts: [] },
-                // { id: 'daily-7', name: 'EP 퀘스트', completed: false, disabled: false, emphasizedParts: [] }, <-- 삭제됨
                 { id: 'daily-8', name: 'T 디지털 드로우', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-9', name: '서버대륙 사막 - 이속칩', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-10', name: '요일 던전 (요던) - 그림자 미궁', completed: false, disabled: false, emphasizedParts: ['요던'] },
@@ -345,6 +346,7 @@
                 { id: 'daily-14', name: '신규 U등급 지하소환소', completed: false, disabled: false, emphasizedParts: ['U등급'] }, 
             ],
             weekly: [
+                { id: 'weekly-18', name: '디지몬 탐험', completed: false, disabled: false, emphasizedParts: [] }, // 요청에 따라 최상단으로 이동
                 { id: 'weekly-1', name: '시즌패스 퀘스트 - 주간', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'weekly-2', name: '디지몬 아레나', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'weekly-3', name: '요코하마 비밀공원 (참치캔)', completed: false, disabled: false, emphasizedParts: ['참치캔'] },
@@ -361,7 +363,7 @@
                 { id: 'weekly-14', name: '황룡몬 던전 HARD (판어)', completed: false, disabled: false, emphasizedParts: ['판어'] },
                 { id: 'weekly-15', name: '다크웹 NORMAL', completed: false, disabled: false, emphasizedParts: ['다크웹'] },
                 { id: 'weekly-16', name: '네버랜드 NORMAL', completed: false, disabled: false, emphasizedParts: ['네버랜드'] },
-                { id: 'weekly-18', name: '디지몬 탐험', completed: false, disabled: false, emphasizedParts: [] }, 
+                { id: 'weekly-19', name: '악몽 NORMAL', completed: false, disabled: false, emphasizedParts: ['악몽'] }, // 요청에 따라 '악몽' NORMAL 항목 추가
             ]
         };
 
@@ -414,14 +416,27 @@
             const weeklyResetHour = 12; // 오후 12시 (정오)
             const dayOfWeek = now.getDay(); 
             
-            let daysSinceWednesday = (dayOfWeek - weeklyResetDay + 7) % 7;
-            if (daysSinceWednesday === 0 && now.getHours() < weeklyResetHour) {
-                daysSinceWednesday = 7; 
+            let daysSinceTuesday = (dayOfWeek - weeklyResetDay + 7) % 7;
+            if (daysSinceTuesday === 0 && now.getHours() < weeklyResetHour) {
+                // 오늘이 화요일이고 아직 12시가 안 되었으면, 리셋은 다음 주 화요일이 아닌 이번 주 화요일 12:00이 기준이 되어야 함.
+                // 그러나 'lastWeeklyReset' 로직상, lastWeeklyReset < currentWeeklyReset이면 리셋이 되므로,
+                // 현재 로직을 유지하면서 날짜만 정확히 계산하도록 수정.
             }
-
-            const currentWeeklyReset = new Date(now);
-            currentWeeklyReset.setDate(now.getDate() - daysSinceWednesday);
+            
+            // 오늘이 리셋 요일(화요일)이고, 현재 시간이 리셋 시간(12시) 이전이면, daysSinceTuesday는 7이어야 함 (지난주 화요일 리셋 시간이 기준)
+            let currentWeeklyReset = new Date(now);
+            
+            // 현재 시간이 리셋 시간보다 이전이고 요일이 리셋 요일이라면, 지난 주 화요일 12:00가 현재 주간 리셋의 기준점임
+            if (dayOfWeek === weeklyResetDay && now.getHours() < weeklyResetHour) {
+                // 리셋 시간이 아직 안 지났으므로, 지난 주 화요일 12:00가 현재 주간 리셋의 기준점임
+                currentWeeklyReset.setDate(now.getDate() - 7);
+            } else {
+                 // 리셋 시간이 지났거나 요일이 다르다면, 이번 주 화요일 12:00가 현재 주간 리셋의 기준점임.
+                 currentWeeklyReset.setDate(now.getDate() - daysSinceTuesday);
+            }
+            
             currentWeeklyReset.setHours(weeklyResetHour, 0, 0, 0);
+
 
             if (now.getTime() >= currentWeeklyReset.getTime() && lastWeeklyReset.getTime() < currentWeeklyReset.getTime()) {
                 resetQuests('weekly');
@@ -450,13 +465,13 @@
             const weeklyResetDay = 2; // 화요일
             const weeklyResetHour = 12; // 오후 12시
 
-            let daysUntilNextWednesday = (weeklyResetDay - dayOfWeek + 7) % 7;
-            if (daysUntilNextWednesday === 0 && now.getHours() >= weeklyResetHour) {
-                daysUntilNextWednesday = 7;
+            let daysUntilNextReset = (weeklyResetDay - dayOfWeek + 7) % 7;
+            if (daysUntilNextReset === 0 && now.getHours() >= weeklyResetHour) {
+                daysUntilNextReset = 7;
             }
             
             const nextWeeklyReset = new Date(now);
-            nextWeeklyReset.setDate(now.getDate() + daysUntilNextWednesday);
+            nextWeeklyReset.setDate(now.getDate() + daysUntilNextReset);
             nextWeeklyReset.setHours(weeklyResetHour, 0, 0, 0);
             const weeklyTimeDiff = nextWeeklyReset - now;
 
@@ -638,6 +653,10 @@
             li.className = `flex items-center p-2 rounded-lg shadow-sm transition-all duration-200 quest-item`;
             
             if (quest.id === 'weekly-13' || quest.id === 'weekly-14' || quest.id === 'weekly-16') {
+                li.classList.add('no-wrap');
+            }
+            // 신규 추가된 '악몽' 항목도 no-wrap 적용
+            if (quest.id === 'weekly-19') {
                 li.classList.add('no-wrap');
             }
             
