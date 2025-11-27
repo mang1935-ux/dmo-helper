@@ -57,13 +57,14 @@
             margin-bottom: 0.5rem; 
         }
 
+        /* 🚨🚨🚨 모바일 제목 크기 수정 부분 (기본값) 🚨🚨🚨 */
         .main-title {
-            font-size: 1.75rem; 
+            font-size: 1.5rem; /* 1.75rem -> 1.5rem으로 축소 (모바일 적용) */
             line-height: 1; 
             margin: 0; 
         }
         
-        /* 🚨🚨🚨 타이틀 중앙 정렬 수정 부분 🚨🚨🚨 */
+        /* 메인 타이틀 중앙 정렬 (Absolute Positioning) */
         .main-title-wrapper {
             position: absolute; /* 절대 위치 */
             top: 50%; /* 수직 중앙 정렬 시작점 */
@@ -96,7 +97,7 @@
             flex-shrink: 0;
         }
 
-        /* 타이머 내부 간격 조정 클래스 - 이전 수정 유지 */
+        /* 타이머 내부 간격 조정 클래스 */
         .timer-row {
             display: grid;
             /* 1열: 라벨 고정 너비 (70px), 2열: 시간 고정 너비 (55px) */
@@ -224,6 +225,7 @@
             .gucci-gradient-bg {
                 padding: 1.5rem 2rem;
             }
+            /* 🚨🚨🚨 PC 제목 크기 유지 🚨🚨🚨 */
              .main-title {
                 font-size: 2rem; 
             }
