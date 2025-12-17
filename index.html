@@ -294,7 +294,7 @@
                 
                 <div class="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200 quest-list-panel">
                     <div class="flex justify-between items-center mb-2">
-                        <h2 class="font-bold gucci-primary-text">일일 컨텐츠 (<span id="daily-count">0/13</span>)</h2>
+                        <h2 class="font-bold gucci-primary-text">일일 컨텐츠 (<span id="daily-count">0/15</span>)</h2>
                         <button id="daily-disable-btn" onclick="openDisableModal('daily')" class="text-xs gucci-button hover:bg-opacity-80 rounded-lg px-2 py-1 transition-colors duration-200 no-wrap">비활성 설정</button>
                     </div>
                     <div id="daily-list-wrapper" class="quest-list-wrapper">
@@ -305,7 +305,7 @@
 
                 <div class="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200 quest-list-panel">
                     <div class="flex justify-between items-center mb-2">
-                        <h2 class="font-bold gucci-primary-text">주간 컨텐츠 (<span id="weekly-count">0/17</span>)</h2> 
+                        <h2 class="font-bold gucci-primary-text">주간 컨텐츠 (<span id="weekly-count">0/19</span>)</h2> 
                         <button id="weekly-disable-btn" onclick="openDisableModal('weekly')" class="text-xs gucci-button hover:bg-opacity-80 rounded-lg px-2 py-1 transition-colors duration-200 no-wrap">비활성 설정</button>
                     </div>
                     <div id="weekly-list-wrapper" class="quest-list-wrapper">
@@ -339,6 +339,8 @@
                 { id: 'daily-4', name: '일일 출석부 이벤트', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-5', name: '간쿠몬의 수련장', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-6', name: '시즌패스 퀘스트 - 일일', completed: false, disabled: false, emphasizedParts: [] },
+                { id: 'daily-7', name: '겨울이벤트(재료 200개) - 일일', completed: false, disabled: false, emphasizedParts: ['겨울이벤트'] }, // 추가된 항목
+                { id: 'daily-7-2', name: '착한아이 나쁜아이', completed: false, disabled: false, emphasizedParts: [] }, // 추가된 항목
                 { id: 'daily-8', name: 'T 디지털 드로우', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-9', name: '서버대륙 사막 - 이속칩', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-10', name: '요일 던전 (요던) - 그림자 미궁', completed: false, disabled: false, emphasizedParts: ['요던'] },
@@ -352,6 +354,7 @@
                 { id: 'weekly-1', name: '시즌패스 퀘스트 - 주간', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'weekly-2', name: '디지몬 아레나', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'weekly-3', name: '요코하마 비밀공원 (참치캔)', completed: false, disabled: false, emphasizedParts: ['참치캔'] },
+                { id: 'weekly-3-2', name: '겨울이벤트(재료 200개) - 주간', completed: false, disabled: false, emphasizedParts: ['겨울이벤트'] }, // 추가된 항목
                 { id: 'weekly-4', name: '로얄베이스 HARD (로어) - 주간', completed: false, disabled: false, emphasizedParts: ['로어'] },
                 { id: 'weekly-5', name: '파괴와 재생 (스던) - 주간', completed: false, disabled: false, emphasizedParts: ['스던'] },
                 { id: 'weekly-6', name: '디지몬 카이저 (메청)', completed: false, disabled: false, emphasizedParts: ['메청'] },
@@ -373,13 +376,16 @@
         let currentModalType = '';
         let isScrolling = false; 
         
-        // 축하 애니메이션 중복 실행을 막기 위한 플래그
+        // 축하 애니메이션 중복 실행을 막기 위한 플래그 (버그 수정: 플래그가 전역으로만 쓰이는 대신, 독립적인 상태를 추적해야 함)
         let dailyCelebrated = false;
         let weeklyCelebrated = false;
 
         // Function to save data to local storage
         const saveQuests = () => {
             localStorage.setItem('digimonQuests', JSON.stringify(quests));
+            // 버그 수정: 축하 플래그 상태도 저장해야 함
+            localStorage.setItem('dailyCelebrated', dailyCelebrated);
+            localStorage.setItem('weeklyCelebrated', weeklyCelebrated);
         };
 
         // Function to load data from local storage
@@ -592,6 +598,11 @@
                 });
 
                 quests = newQuests;
+                
+                // 버그 수정: 축하 플래그도 로드
+                dailyCelebrated = localStorage.getItem('dailyCelebrated') === 'true';
+                weeklyCelebrated = localStorage.getItem('weeklyCelebrated') === 'true';
+                
             } else {
                 quests = JSON.parse(JSON.stringify(hardcodedQuests));
             }
@@ -631,22 +642,41 @@
             dailyCount.textContent = `${dailyCompleted}/${dailyActiveQuests.length}`;
             weeklyCount.textContent = `${weeklyCompleted}/${weeklyActiveQuests.length}`;
             
-            // -------------------- 독립적인 축하 애니메이션 로직 --------------------
+            // -------------------- 독립적인 축하 애니메이션 로직 (버그 수정) --------------------
             
             if (doCelebrate) {
                 // 1. 일일 컨텐츠 모두 완료 확인
                 if (dailyActiveQuests.length > 0 && dailyCompleted === dailyActiveQuests.length && !dailyCelebrated) {
                     celebrate('오늘의 컨텐츠 완료!');
                     dailyCelebrated = true;
+                    // 버그 수정: 즉시 상태 저장 (애니메이션 플래그 포함)
+                    saveQuests(); 
+                } 
+                // 일일 컨텐츠가 완료되지 않았다면 플래그를 false로 초기화 (클릭으로 인해 완료가 취소되었을 경우 대비)
+                else if (dailyCelebrated && dailyCompleted < dailyActiveQuests.length) {
+                    dailyCelebrated = false;
+                    saveQuests(); 
                 }
+
                 // 2. 주간 컨텐츠 모두 완료 확인
                 if (weeklyActiveQuests.length > 0 && weeklyCompleted === weeklyActiveQuests.length && !weeklyCelebrated) {
                     celebrate('주간 컨텐츠 완료!');
                     weeklyCelebrated = true;
+                    // 버그 수정: 즉시 상태 저장 (애니메이션 플래그 포함)
+                    saveQuests(); 
+                }
+                // 주간 컨텐츠가 완료되지 않았다면 플래그를 false로 초기화 (클릭으로 인해 완료가 취소되었을 경우 대비)
+                else if (weeklyCelebrated && weeklyCompleted < weeklyActiveQuests.length) {
+                    weeklyCelebrated = false;
+                    saveQuests();
                 }
             }
 
-            saveQuests();
+            // 축하 로직에서 saveQuests를 처리하므로 여기서는 중복 호출하지 않습니다.
+            // 다만, doCelebrate가 false인 경우(비활성 설정 변경 등)에는 여기서 저장해야 합니다.
+            if (!doCelebrate) {
+                 saveQuests();
+            }
         };
 
         // Function to create quest item HTML element
@@ -654,11 +684,8 @@
             const li = document.createElement('li');
             li.className = `flex items-center p-2 rounded-lg shadow-sm transition-all duration-200 quest-item`;
             
-            if (quest.id === 'weekly-13' || quest.id === 'weekly-14' || quest.id === 'weekly-16') {
-                li.classList.add('no-wrap');
-            }
-            // 신규 추가된 '악몽' 항목도 no-wrap 적용
-            if (quest.id === 'weekly-19') {
+            // 신규/기존 no-wrap 항목들
+            if (quest.id === 'weekly-13' || quest.id === 'weekly-14' || quest.id === 'weekly-16' || quest.id === 'weekly-19' || quest.id === 'weekly-3-2') {
                 li.classList.add('no-wrap');
             }
             
