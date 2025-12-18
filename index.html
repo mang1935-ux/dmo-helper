@@ -6,157 +6,60 @@
     <title>디지몬마스터즈 컨텐츠 도우미</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* 모든 요소에 box-sizing: border-box 적용하여 padding/border가 너비에 포함되도록 설정 */
-        *, ::before, ::after {
-            box-sizing: border-box;
-        }
-        
-        /* Tailwind 클래스 재정의: Flexbox 대신 Grid 사용을 위해 일부 제거 */
-        .flex { display: flex; }
-        .flex-col { flex-direction: column; }
-        .justify-between { justify-content: space-between; }
-        .items-center { align-items: center; }
-        .gap-05 { gap: 0.125rem; } 
-
-        /* ------------------------- A. 전체 레이아웃 (스크롤 제거 및 압축) ------------------------- */
-        html, body {
-            height: 100%; 
-            margin: 0;
-        }
+        *, ::before, ::after { box-sizing: border-box; }
+        html, body { height: 100%; margin: 0; }
         body {
             font-family: 'Inter', sans-serif;
             background: #f7f0e8; 
             color: #1e293b;
-            transition: background-color 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0; 
-            overflow: hidden; /* 스크롤 강제 제거 */
+            overflow: hidden;
         }
-        
         .gucci-gradient-bg {
             padding: 1rem 1.5rem; 
-            width: 95%; /* 뷰포트의 95% 사용 */
+            width: 95%; 
             max-width: 1200px; 
             height: 95vh; 
             max-height: 900px; 
             display: flex;
             flex-direction: column; 
         }
-
-        /* ------------------------- B. 헤더 및 구분선 압축 ------------------------- */
-        
         .gucci-web-stripe-decorator {
             height: 3px; 
             background: linear-gradient(to right, #1a472a 0%, #1a472a 33%, #b33939 33%, #b33939 66%, #1a472a 66%, #1a472a 100%);
             width: 100%;
             margin: 0.5rem 0; 
         }
-        .separator-bottom {
-            margin-bottom: 0.5rem; 
-        }
-
-        /* 🚨🚨🚨 모바일 제목 크기 수정 부분 (기본값) 🚨🚨🚨 */
-        .main-title {
-            font-size: 1.5rem; /* 1.75rem -> 1.5rem으로 축소 (모바일 적용) */
-            line-height: 1; 
-            margin: 0; 
-        }
-        
-        /* 메인 타이틀 중앙 정렬 (Absolute Positioning) */
+        .separator-bottom { margin-bottom: 0.5rem; }
+        .main-title { font-size: 1.5rem; line-height: 1; margin: 0; }
         .main-title-wrapper {
-            position: absolute; /* 절대 위치 */
-            top: 50%; /* 수직 중앙 정렬 시작점 */
-            left: 50%; /* 수평 중앙 정렬 시작점 */
-            transform: translate(-50%, -50%); /* 자기 너비/높이의 50%만큼 이동하여 정확히 중앙 정렬 */
-            width: auto; 
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
             text-align: center; 
             z-index: 10; 
         }
-
         .header-layout {
             line-height: 1.1;
-            padding: 0;
             margin-bottom: 0.5rem; 
             display: flex; 
             justify-content: space-between;
             align-items: center;
-            position: relative; /* 자식 요소의 absolute 기준점 */
+            position: relative;
         }
-        .creator-info-area {
-            min-width: 90px; 
-            font-size: 0.8rem; 
-            flex-shrink: 0;
-        }
-        
-        /* 타이머 영역 최소 너비 축소 */
-        .timer-area {
-            min-width: 135px; /* 타이머 정렬을 위해 너비 확장 (70px + 4px + 55px) */
-            font-size: 0.7rem; 
-            flex-shrink: 0;
-        }
-
-        /* 타이머 내부 간격 조정 클래스 */
-        .timer-row {
-            display: grid;
-            /* 1열: 라벨 고정 너비 (70px), 2열: 시간 고정 너비 (55px) */
-            grid-template-columns: 70px 55px; 
-            gap: 4px; /* 라벨과 시간 사이의 간격 */
-            align-items: center;
-        }
-        
-        /* 첫 번째 열(라벨)을 오른쪽 정렬하여 시간과 붙도록 설정 */
-        .timer-row > span:first-child {
-            padding-right: 0; /* 기존 패딩 제거 */
-            text-align: right; 
-        }
-
-        /* 시간 텍스트가 오른쪽 정렬되도록 명시 */
-        .timer-row > span:last-child {
-            text-align: right; 
-        }
-
-
-        /* ------------------------- C. 컨텐츠 목록 높이 고정 ------------------------- */
-        .quest-content-area {
-            flex-grow: 1; 
-            overflow-y: hidden; 
-            display: flex;
-            gap: 1.5rem;
-            min-height: 0; 
-        }
-        .quest-list-panel {
-            flex-basis: 50%; 
-            flex-shrink: 1; 
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
-            flex-basis: 100%; 
-        }
-        .quest-list-wrapper {
-            flex-grow: 1; 
-            overflow-y: auto; 
-            padding-right: 0.5rem; 
-            margin-right: -0.5rem; 
-            min-height: 0;
-            -webkit-overflow-scrolling: touch; 
-        }
-        
-        #daily-quest-list, #weekly-quest-list {
-            gap: 0.5rem; 
-            padding-bottom: 0.5rem; 
-        }
-        .quest-list-panel h2 {
-            font-size: 1.5rem; 
-            margin-bottom: 0.5rem;
-        }
-        .quest-item {
-            cursor: pointer;
-        }
-
-        /* ------------------------- D. Tailwind 및 기타 스타일 ------------------------- */
-
+        .creator-info-area { min-width: 90px; font-size: 0.8rem; flex-shrink: 0; }
+        .timer-area { min-width: 135px; font-size: 0.7rem; flex-shrink: 0; }
+        .timer-row { display: grid; grid-template-columns: 70px 55px; gap: 4px; align-items: center; }
+        .timer-row > span:first-child { text-align: right; }
+        .timer-row > span:last-child { text-align: right; }
+        .quest-content-area { flex-grow: 1; overflow-y: hidden; display: flex; gap: 1.5rem; min-height: 0; }
+        .quest-list-panel { flex-basis: 100%; display: flex; flex-direction: column; min-height: 0; }
+        .quest-list-wrapper { flex-grow: 1; overflow-y: auto; padding-right: 0.5rem; margin-right: -0.5rem; min-height: 0; -webkit-overflow-scrolling: touch; }
+        #daily-quest-list, #weekly-quest-list { gap: 0.5rem; padding-bottom: 0.5rem; }
+        .quest-list-panel h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .quest-item { cursor: pointer; }
         .gucci-primary-text { color: #1a472a; }
         .gucci-secondary-text { color: #b33939; }
         .gucci-highlight-text { color: #c88a38; font-weight: bold; }
@@ -166,171 +69,81 @@
         .gucci-checkbox:checked { background-color: #1a472a; border-color: #1a472a; }
         .disabled-item { background-color: #ececec !important; color: #9ca3af !important; text-decoration: line-through; }
         .no-wrap { white-space: nowrap; }
-
-        /* Modal styles */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center;
-            align-items: center; z-index: 100;
-        }
-        .modal-content {
-            background-color: #fcf8f3; padding: 2rem; border-radius: 1rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); width: 90%; max-width: 500px;
-            animation: fadeIn 0.3s ease-out;
-            max-height: 80vh; 
-            overflow-y: auto;
-        }
-        
-        /* ------------------------- E. 축하 애니메이션 스타일 (강화된 파티클) ------------------------- */
-
-        /* 팝업 등장 애니메이션 (Bounce 효과) */
-        #celebration-popup {
-            animation: popupIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 100; }
+        .modal-content { background-color: #fcf8f3; padding: 2rem; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; }
+        #celebration-popup { animation: popupIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes popupIn {
             0% { opacity: 0; transform: translate(-50%, -50%) scale(0.1); }
             70% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
             100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         }
-
-        /* 파티클 기본 스타일 */
-        .confetti-particle {
-            position: fixed;
-            border-radius: 0; /* 기본값 리셋 */
-            z-index: 102; 
-            pointer-events: none; /* 마우스 이벤트 무시 */
-            /* animation 속성은 JS에서 개별적으로 설정됨 */
-        }
-
-        /* 다이아몬드 모양 */
-        .confetti-diamond {
-            transform: rotate(45deg); /* 사각형을 45도 회전 */
-        }
-
-        /* 파티클 떨어지는 애니메이션 (다양한 시작점과 종료점, 회전 효과) */
+        .confetti-particle { position: fixed; z-index: 102; pointer-events: none; }
+        .confetti-diamond { transform: rotate(45deg); }
         @keyframes confettiFall {
-            0% { 
-                transform: translateY(-50vh) rotate(0deg); /* 화면 위쪽에서 시작 */
-                opacity: 0; 
-            }
+            0% { transform: translateY(-50vh) rotate(0deg); opacity: 0; }
             10% { opacity: 1; }
-            100% { 
-                transform: translateY(100vh) rotate(720deg); /* 2바퀴 회전하며 아래로 떨어짐 */
-                opacity: 0; 
-            }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
         }
-        
-        /* PC (768px 이상) - 가로 2단 레이아웃 */
         @media (min-width: 768px) {
-            .gucci-gradient-bg {
-                padding: 1.5rem 2rem;
-            }
-            /* 🚨🚨🚨 PC 제목 크기 유지 🚨🚨🚨 */
-             .main-title {
-                font-size: 2rem; 
-            }
-            .creator-info-area {
-                min-width: 110px; 
-            }
-            .timer-area {
-                min-width: 140px; /* PC 환경에서도 충분한 공간 확보 */
-            }
-             .quest-list-panel h2 {
-                font-size: 1.75rem; 
-            }
-            .quest-list-panel {
-                flex-basis: 50%; 
-            }
+            .main-title { font-size: 2rem; }
+            .quest-list-panel { flex-basis: 50%; }
         }
-
-        /* 모바일 환경 (767px 이하) - 세로 2단 레이아웃 (스크롤 발생) */
         @media (max-width: 767px) {
-            .quest-content-area {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            .quest-list-panel {
-                flex-basis: auto;
-                height: 50%; 
-            }
+            .quest-content-area { flex-direction: column; gap: 1rem; }
+            .quest-list-panel { height: 50%; }
         }
     </style>
 </head>
-<body class="">
-
+<body>
     <div class="gucci-gradient-bg rounded-2xl relative">
-        
         <div class="gucci-web-stripe-decorator"></div> 
-        
         <div class="header-layout">
-            
             <div class="creator-info-area text-gray-600 flex-col">
-                <span class="text-sm">Made by. <span class="font-extrabold gucci-highlight-text">망근</span></span>
+                <span class="text-sm">Made by. <span class="font-extrabold gucci-highlight-text">망근</span></span><br>
                 <span class="text-xs text-gray-500">from <span class="font-bold gucci-primary-text">GUCCI</span> Guild</span>
             </div>
-            
             <div class="main-title-wrapper">
-                <h1 class="main-title font-bold gucci-primary-text">디지몬마스터즈 컨텐츠 도우미</h1>
+                <h1 class="main-title font-bold gucci-primary-text">디지몬마스터즈 도우미</h1>
             </div>
-            
             <div class="timer-area">
-                <div class="flex flex-col gap-0.5 timer-content">
-                    <div class="timer-row">
-                        <span>일일 초기화:</span>
-                        <span id="daily-timer" class="gucci-secondary-text font-semibold no-wrap"></span>
-                    </div>
-                    <div class="timer-row">
-                        <span>주간 초기화:</span>
-                        <span id="weekly-timer" class="gucci-secondary-text font-semibold no-wrap"></span>
-                    </div>
-                </div>
+                <div class="timer-row"><span>일일 초기화:</span><span id="daily-timer" class="gucci-secondary-text font-semibold no-wrap"></span></div>
+                <div class="timer-row"><span>주간 초기화:</span><span id="weekly-timer" class="gucci-secondary-text font-semibold no-wrap"></span></div>
             </div>
-
         </div>
-        
         <div class="gucci-web-stripe-decorator separator-bottom"></div> 
-
-            <div class="quest-content-area">
-                
-                <div class="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200 quest-list-panel">
-                    <div class="flex justify-between items-center mb-2">
-                        <h2 class="font-bold gucci-primary-text">일일 컨텐츠 (<span id="daily-count">0/15</span>)</h2>
-                        <button id="daily-disable-btn" onclick="openDisableModal('daily')" class="text-xs gucci-button hover:bg-opacity-80 rounded-lg px-2 py-1 transition-colors duration-200 no-wrap">비활성 설정</button>
-                    </div>
-                    <div id="daily-list-wrapper" class="quest-list-wrapper">
-                        <ul id="daily-quest-list" class="flex flex-col gap-0.5">
-                        </ul>
-                    </div>
+        <div class="quest-content-area">
+            <div class="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200 quest-list-panel">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="font-bold gucci-primary-text">일일 컨텐츠 (<span id="daily-count">0/0</span>)</h2>
+                    <button onclick="openDisableModal('daily')" class="text-xs gucci-button rounded-lg px-2 py-1">비활성 설정</button>
                 </div>
-
-                <div class="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200 quest-list-panel">
-                    <div class="flex justify-between items-center mb-2">
-                        <h2 class="font-bold gucci-primary-text">주간 컨텐츠 (<span id="weekly-count">0/19</span>)</h2> 
-                        <button id="weekly-disable-btn" onclick="openDisableModal('weekly')" class="text-xs gucci-button hover:bg-opacity-80 rounded-lg px-2 py-1 transition-colors duration-200 no-wrap">비활성 설정</button>
-                    </div>
-                    <div id="weekly-list-wrapper" class="quest-list-wrapper">
-                        <ul id="weekly-quest-list" class="flex flex-col gap-0.5">
-                        </ul>
-                    </div>
+                <div id="daily-list-wrapper" class="quest-list-wrapper">
+                    <ul id="daily-quest-list" class="flex flex-col gap-0.5"></ul>
                 </div>
             </div>
-
+            <div class="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200 quest-list-panel">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="font-bold gucci-primary-text">주간 컨텐츠 (<span id="weekly-count">0/0</span>)</h2>
+                    <button onclick="openDisableModal('weekly')" class="text-xs gucci-button rounded-lg px-2 py-1">비활성 설정</button>
+                </div>
+                <div id="weekly-list-wrapper" class="quest-list-wrapper">
+                    <ul id="weekly-quest-list" class="flex flex-col gap-0.5"></ul>
+                </div>
+            </div>
+        </div>
         <div id="disable-modal" class="modal-overlay hidden">
             <div class="modal-content">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 id="modal-title" class="text-xl font-bold gucci-primary-text">컨텐츠 비활성 설정</h3>
-                    <button onclick="closeDisableModal()" class="text-gray-500 hover:text-gray-700 text-2xl font-bold">&times;</button>
+                    <h3 id="modal-title" class="text-xl font-bold gucci-primary-text">설정</h3>
+                    <button onclick="closeDisableModal()" class="text-2xl">&times;</button>
                 </div>
-                <div id="modal-list" class="space-y-2">
-                </div>
-                <button onclick="closeDisableModal()" class="mt-6 w-full py-2 gucci-button rounded-lg hover:bg-opacity-80 transition-colors duration-200">닫기</button>
+                <div id="modal-list" class="space-y-2"></div>
+                <button onclick="closeDisableModal()" class="mt-6 w-full py-2 gucci-button rounded-lg">닫기</button>
             </div>
         </div>
-
     </div>
 
     <script>
-        // Fixed quest content lists
         const hardcodedQuests = {
             daily: [
                 { id: 'daily-1', name: '할배몬의 럭키 박스', completed: false, disabled: false, emphasizedParts: [] },
@@ -339,8 +152,8 @@
                 { id: 'daily-4', name: '일일 출석부 이벤트', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-5', name: '간쿠몬의 수련장', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-6', name: '시즌패스 퀘스트 - 일일', completed: false, disabled: false, emphasizedParts: [] },
-                { id: 'daily-7', name: '겨울이벤트(재료 200개) - 일일', completed: false, disabled: false, emphasizedParts: ['겨울이벤트'] }, // 추가된 항목
-                { id: 'daily-7-2', name: '착한아이 나쁜아이', completed: false, disabled: false, emphasizedParts: [] }, // 추가된 항목
+                { id: 'daily-7', name: '겨울이벤트(재료 200개) - 일일', completed: false, disabled: false, emphasizedParts: ['겨울이벤트'] },
+                { id: 'daily-7-2', name: '착한아이 나쁜아이', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-8', name: 'T 디지털 드로우', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-9', name: '서버대륙 사막 - 이속칩', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-10', name: '요일 던전 (요던) - 그림자 미궁', completed: false, disabled: false, emphasizedParts: ['요던'] },
@@ -350,11 +163,11 @@
                 { id: 'daily-14', name: '신규 U등급 지하소환소', completed: false, disabled: false, emphasizedParts: ['U등급'] }, 
             ],
             weekly: [
-                { id: 'weekly-18', name: '디지몬 탐험', completed: false, disabled: false, emphasizedParts: [] }, // 요청에 따라 최상단으로 이동
+                { id: 'weekly-18', name: '디지몬 탐험', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'weekly-1', name: '시즌패스 퀘스트 - 주간', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'weekly-2', name: '디지몬 아레나', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'weekly-3', name: '요코하마 비밀공원 (참치캔)', completed: false, disabled: false, emphasizedParts: ['참치캔'] },
-                { id: 'weekly-3-2', name: '겨울이벤트(재료 200개) - 주간', completed: false, disabled: false, emphasizedParts: ['겨울이벤트'] }, // 추가된 항목
+                { id: 'weekly-3-2', name: '겨울이벤트(재료 200개) - 주간', completed: false, disabled: false, emphasizedParts: ['겨울이벤트'] },
                 { id: 'weekly-4', name: '로얄베이스 HARD (로어) - 주간', completed: false, disabled: false, emphasizedParts: ['로어'] },
                 { id: 'weekly-5', name: '파괴와 재생 (스던) - 주간', completed: false, disabled: false, emphasizedParts: ['스던'] },
                 { id: 'weekly-6', name: '디지몬 카이저 (메청)', completed: false, disabled: false, emphasizedParts: ['메청'] },
@@ -368,474 +181,216 @@
                 { id: 'weekly-14', name: '황룡몬 던전 HARD (판어)', completed: false, disabled: false, emphasizedParts: ['판어'] },
                 { id: 'weekly-15', name: '다크웹 NORMAL', completed: false, disabled: false, emphasizedParts: ['다크웹'] },
                 { id: 'weekly-16', name: '네버랜드 NORMAL', completed: false, disabled: false, emphasizedParts: ['네버랜드'] },
-                { id: 'weekly-19', name: '악몽 NORMAL', completed: false, disabled: false, emphasizedParts: ['악몽'] }, // 요청에 따라 '악몽' NORMAL 항목 추가
+                { id: 'weekly-19', name: '악몽 NORMAL', completed: false, disabled: false, emphasizedParts: ['악몽'] },
             ]
         };
 
         let quests = {};
-        let currentModalType = '';
-        let isScrolling = false; 
-        
-        // 축하 애니메이션 중복 실행을 막기 위한 플래그 (버그 수정: 플래그가 전역으로만 쓰이는 대신, 독립적인 상태를 추적해야 함)
         let dailyCelebrated = false;
         let weeklyCelebrated = false;
 
-        // Function to save data to local storage
         const saveQuests = () => {
             localStorage.setItem('digimonQuests', JSON.stringify(quests));
-            // 버그 수정: 축하 플래그 상태도 저장해야 함
             localStorage.setItem('dailyCelebrated', dailyCelebrated);
             localStorage.setItem('weeklyCelebrated', weeklyCelebrated);
         };
 
-        // Function to load data from local storage
         const loadQuests = () => {
             const stored = localStorage.getItem('digimonQuests');
             return stored ? JSON.parse(stored) : null;
         };
-        
-        // Function to reset only completion status
+
         const resetQuests = (type) => {
             if (quests[type]) {
                 quests[type] = quests[type].map(q => ({ ...q, completed: false }));
             }
-            // 리셋 시 축하 플래그도 초기화
             if (type === 'daily') dailyCelebrated = false;
             if (type === 'weekly') weeklyCelebrated = false;
         };
 
-        // Automatic reset logic 
         const handleAutoReset = () => {
             const now = new Date();
-            const lastDailyReset = new Date(localStorage.getItem('lastDailyReset') || 0);
-            const lastWeeklyReset = new Date(localStorage.getItem('lastWeeklyReset') || 0);
-            
-            // Daily reset (at 00:00)
-            const dailyResetTime = new Date(now);
-            dailyResetTime.setHours(0, 0, 0, 0); 
-            
-            if (now.getTime() >= dailyResetTime.getTime() && lastDailyReset.getTime() < dailyResetTime.getTime()) {
-                resetQuests('daily');
-                localStorage.setItem('lastDailyReset', dailyResetTime.toISOString());
-            }
+            const lastDailyResetStr = localStorage.getItem('lastDailyReset');
+            const lastWeeklyResetStr = localStorage.getItem('lastWeeklyReset');
 
-            // Weekly reset (Tuesday at 12:00)
-            const weeklyResetDay = 2; // 화요일 (0=일요일, 1=월요일, ...)
-            const weeklyResetHour = 12; // 오후 12시 (정오)
-            const dayOfWeek = now.getDay(); 
-            
-            let daysSinceTuesday = (dayOfWeek - weeklyResetDay + 7) % 7;
-            if (daysSinceTuesday === 0 && now.getHours() < weeklyResetHour) {
-                // 오늘이 화요일이고 아직 12시가 안 되었으면, 리셋은 다음 주 화요일이 아닌 이번 주 화요일 12:00이 기준이 되어야 함.
-                // 그러나 'lastWeeklyReset' 로직상, lastWeeklyReset < currentWeeklyReset이면 리셋이 되므로,
-                // 현재 로직을 유지하면서 날짜만 정확히 계산하도록 수정.
-            }
-            
-            // 오늘이 리셋 요일(화요일)이고, 현재 시간이 리셋 시간(12시) 이전이면, daysSinceTuesday는 7이어야 함 (지난주 화요일 리셋 시간이 기준)
-            let currentWeeklyReset = new Date(now);
-            
-            // 현재 시간이 리셋 시간보다 이전이고 요일이 리셋 요일이라면, 지난 주 화요일 12:00가 현재 주간 리셋의 기준점임
-            if (dayOfWeek === weeklyResetDay && now.getHours() < weeklyResetHour) {
-                // 리셋 시간이 아직 안 지났으므로, 지난 주 화요일 12:00가 현재 주간 리셋의 기준점임
-                currentWeeklyReset.setDate(now.getDate() - 7);
+            // 일일 리셋 (00:00)
+            const dailyThreshold = new Date(now);
+            dailyThreshold.setHours(0, 0, 0, 0);
+
+            if (lastDailyResetStr) {
+                const lastReset = new Date(lastDailyResetStr);
+                if (lastReset < dailyThreshold) {
+                    resetQuests('daily');
+                    localStorage.setItem('lastDailyReset', now.toISOString());
+                }
             } else {
-                 // 리셋 시간이 지났거나 요일이 다르다면, 이번 주 화요일 12:00가 현재 주간 리셋의 기준점임.
-                 currentWeeklyReset.setDate(now.getDate() - daysSinceTuesday);
+                localStorage.setItem('lastDailyReset', now.toISOString());
             }
-            
-            currentWeeklyReset.setHours(weeklyResetHour, 0, 0, 0);
 
+            // 주간 리셋 (화요일 12:00)
+            const weeklyResetDay = 2;
+            const weeklyResetHour = 12;
+            let weeklyThreshold = new Date(now);
+            let daysSinceTuesday = (now.getDay() - weeklyResetDay + 7) % 7;
+            weeklyThreshold.setDate(now.getDate() - daysSinceTuesday);
+            weeklyThreshold.setHours(weeklyResetHour, 0, 0, 0);
 
-            if (now.getTime() >= currentWeeklyReset.getTime() && lastWeeklyReset.getTime() < currentWeeklyReset.getTime()) {
-                resetQuests('weekly');
-                localStorage.setItem('lastWeeklyReset', currentWeeklyReset.toISOString()); 
+            if (now.getDay() === weeklyResetDay && now.getHours() < weeklyResetHour) {
+                weeklyThreshold.setDate(weeklyThreshold.getDate() - 7);
+            }
+
+            if (lastWeeklyResetStr) {
+                const lastReset = new Date(lastWeeklyResetStr);
+                if (lastReset < weeklyThreshold) {
+                    resetQuests('weekly');
+                    localStorage.setItem('lastWeeklyReset', now.toISOString());
+                }
+            } else {
+                localStorage.setItem('lastWeeklyReset', now.toISOString());
             }
         };
 
-        // Timer update function
         const updateTimers = () => {
             const now = new Date();
-            
-            // Daily timer calculation
-            const nextDailyReset = new Date(now);
-            nextDailyReset.setDate(now.getDate() + 1);
-            nextDailyReset.setHours(0, 0, 0, 0);
-            const dailyTimeDiff = nextDailyReset - now;
-            
-            const dailyHours = Math.floor((dailyTimeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const dailyMinutes = Math.floor((dailyTimeDiff % (1000 * 60 * 60)) / (1000 * 60));
-            const dailySeconds = Math.floor((dailyTimeDiff % (1000 * 60)) / 1000);
-            
-            document.getElementById('daily-timer').textContent = `${String(dailyHours).padStart(2, '0')}:${String(dailyMinutes).padStart(2, '0')}:${String(dailySeconds).padStart(2, '0')}`;
+            const nextDaily = new Date(now);
+            nextDaily.setDate(now.getDate() + 1);
+            nextDaily.setHours(0, 0, 0, 0);
+            const dDiff = nextDaily - now;
+            const dH = Math.floor(dDiff / 3600000);
+            const dM = Math.floor((dDiff % 3600000) / 60000);
+            const dS = Math.floor((dDiff % 60000) / 1000);
+            document.getElementById('daily-timer').textContent = `${String(dH).padStart(2,'0')}:${String(dM).padStart(2,'0')}:${String(dS).padStart(2,'0')}`;
 
-            // Weekly timer calculation (Tuesday at 12:00)
-            const dayOfWeek = now.getDay();
-            const weeklyResetDay = 2; // 화요일
-            const weeklyResetHour = 12; // 오후 12시
-
-            let daysUntilNextReset = (weeklyResetDay - dayOfWeek + 7) % 7;
-            if (daysUntilNextReset === 0 && now.getHours() >= weeklyResetHour) {
-                daysUntilNextReset = 7;
-            }
-            
-            const nextWeeklyReset = new Date(now);
-            nextWeeklyReset.setDate(now.getDate() + daysUntilNextReset);
-            nextWeeklyReset.setHours(weeklyResetHour, 0, 0, 0);
-            const weeklyTimeDiff = nextWeeklyReset - now;
-
-            const totalWeeklyHours = Math.floor(weeklyTimeDiff / (1000 * 60 * 60));
-            const weeklyMinutes = Math.floor((weeklyTimeDiff % (1000 * 60 * 60)) / (1000 * 60));
-            const weeklySeconds = Math.floor((weeklyTimeDiff % (1000 * 60)) / 1000);
-            
-            document.getElementById('weekly-timer').textContent = `${String(totalWeeklyHours).padStart(2, '0')}:${String(weeklyMinutes).padStart(2, '0')}:${String(weeklySeconds).padStart(2, '0')}`;
+            const nextWeekly = new Date(now);
+            let dUntil = (2 - now.getDay() + 7) % 7;
+            if (dUntil === 0 && now.getHours() >= 12) dUntil = 7;
+            nextWeekly.setDate(now.getDate() + dUntil);
+            nextWeekly.setHours(12, 0, 0, 0);
+            const wDiff = nextWeekly - now;
+            const wH = Math.floor(wDiff / 3600000);
+            const wM = Math.floor((wDiff % 3600000) / 60000);
+            const wS = Math.floor((wDiff % 60000) / 1000);
+            document.getElementById('weekly-timer').textContent = `${String(wH).padStart(2,'0')}:${String(wM).padStart(2,'0')}:${String(wS).padStart(2,'0')}`;
         };
 
-        // Function to celebrate with a cleaner, centralized popup and more abundant particle effect
-        const celebrate = (message) => {
-            // 팝업 컨테이너 생성
+        const celebrate = (msg) => {
             const popup = document.createElement('div');
             popup.id = 'celebration-popup';
-            popup.textContent = message; 
-            popup.className = 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[101] bg-white border-4 border-yellow-500 text-3xl font-extrabold text-gray-800 px-8 py-4 rounded-full shadow-2xl transition-all duration-300 ease-out opacity-0 scale-50'; 
-            
+            popup.textContent = msg;
+            popup.className = 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[101] bg-white border-4 border-yellow-500 text-2xl font-bold px-8 py-4 rounded-full shadow-2xl';
             document.body.appendChild(popup);
-
-            // -------------------- 풍부해진 파티클 효과 --------------------
-            const colors = [
-                '#FFD700', '#FF6347', '#ADFF2F', '#1E90FF', '#FFA07A', '#BA55D3', 
-                '#FF4500', '#7B68EE', '#32CD32', '#FF69B4', '#DAA520', '#40E0D0' 
-            ]; 
-            const numberOfParticles = 150; // 파티클 개수 증가
-
-            for (let i = 0; i < numberOfParticles; i++) {
-                const particle = document.createElement('div');
-                
-                // 랜덤 모양 선택 (0: 원형, 1: 사각형, 2: 다이아몬드, 3: 삼각형)
-                const shapeType = Math.floor(Math.random() * 4); 
-                let size = Math.random() * 8 + 5; // 5px ~ 13px 크기
-
-                particle.style.opacity = Math.random() * 0.7 + 0.3; // 투명도 랜덤화 (0.3 ~ 1.0)
-                
-                if (shapeType === 0) { // 원형
-                    particle.className = 'confetti-particle rounded-full';
-                    particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                    particle.style.width = `${size}px`;
-                    particle.style.height = `${size}px`;
-                } else if (shapeType === 1) { // 사각형
-                    particle.className = 'confetti-particle';
-                    particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                    particle.style.width = `${size}px`;
-                    particle.style.height = `${size}px`;
-                } else if (shapeType === 2) { // 다이아몬드
-                    particle.className = 'confetti-particle confetti-diamond';
-                    particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                    particle.style.width = `${size}px`;
-                    particle.style.height = `${size}px`;
-                } else { // 삼각형
-                    particle.className = 'confetti-particle'; // 기본 클래스 유지
-                    size = Math.random() * 10 + 5; 
-                    // border 스타일을 직접 적용하여 삼각형 구현
-                    particle.style.width = '0';
-                    particle.style.height = '0';
-                    particle.style.backgroundColor = 'transparent'; 
-                    particle.style.borderLeft = `${size/2}px solid transparent`; 
-                    particle.style.borderRight = `${size/2}px solid transparent`; 
-                    // 색상은 border-bottom에 적용
-                    particle.style.borderBottom = `${size * 0.866}px solid ${colors[Math.floor(Math.random() * colors.length)]}`; 
-                }
-
-                // 화면 전체에서 무작위 위치에 생성
-                particle.style.left = `${Math.random() * 100}vw`; 
-                particle.style.top = `${Math.random() * 100}vh`;  
-                
-                // 애니메이션 속도와 딜레이를 무작위로 설정
-                const duration = Math.random() * 1.5 + 1.5; // 1.5s ~ 3.0s
-                const delay = Math.random() * 0.8; // 0s ~ 0.8s 딜레이
-
-                // CSS transform을 직접 조작하여 다양한 움직임 구현
-                particle.style.animation = `confettiFall ${duration}s ${delay}s forwards`;
-                
-                document.body.appendChild(particle);
-
-                // 파티클은 애니메이션 지속 시간 후 사라짐
-                setTimeout(() => {
-                    particle.remove();
-                }, (duration + delay) * 1000 + 100); 
+            
+            for(let i=0; i<100; i++) {
+                const p = document.createElement('div');
+                p.className = 'confetti-particle';
+                p.style.backgroundColor = ['#FFD700','#FF6347','#ADFF2F','#1E90FF','#FFA07A'][Math.floor(Math.random()*5)];
+                p.style.width = p.style.height = Math.random()*10+5+'px';
+                p.style.left = Math.random()*100+'vw';
+                p.style.top = '-10px';
+                p.style.animation = `confettiFall ${Math.random()*2+1}s forwards`;
+                document.body.appendChild(p);
+                setTimeout(()=>p.remove(), 3000);
             }
-
-            // 팝업 등장 애니메이션 (Bounce 효과)
-            setTimeout(() => {
-                popup.classList.add('opacity-100', 'scale-100');
-            }, 10); 
-
-            // 팝업 1.5초 후 사라짐
-            setTimeout(() => {
-                popup.classList.remove('opacity-100', 'scale-100');
-                popup.classList.add('opacity-0', 'scale-50');
-            }, 1500);
-
-            // 팝업 완전 제거
-            setTimeout(() => {
-                popup.remove();
-            }, 1800);
+            setTimeout(() => popup.remove(), 2000);
         };
 
-
-        // Function to set initial quest data
         const initializeQuests = () => {
-            const storedQuests = loadQuests();
-            if (storedQuests) {
-                const newQuests = { daily: [], weekly: [] };
-                
+            const stored = loadQuests();
+            if (stored) {
+                quests = { daily: [], weekly: [] };
                 hardcodedQuests.daily.forEach(q => {
-                    const existing = storedQuests.daily.find(sq => sq.id === q.id);
-                    newQuests.daily.push(existing ? { ...q, completed: existing.completed, disabled: existing.disabled } : q);
+                    const ex = stored.daily.find(s => s.id === q.id);
+                    quests.daily.push(ex ? { ...q, completed: ex.completed, disabled: ex.disabled } : q);
                 });
-                
                 hardcodedQuests.weekly.forEach(q => {
-                    const existing = storedQuests.weekly.find(sq => sq.id === q.id);
-                    newQuests.weekly.push(existing ? { ...q, completed: existing.completed, disabled: existing.disabled } : q);
+                    const ex = stored.weekly.find(s => s.id === q.id);
+                    quests.weekly.push(ex ? { ...q, completed: ex.completed, disabled: ex.disabled } : q);
                 });
-
-                quests = newQuests;
-                
-                // 버그 수정: 축하 플래그도 로드
                 dailyCelebrated = localStorage.getItem('dailyCelebrated') === 'true';
                 weeklyCelebrated = localStorage.getItem('weeklyCelebrated') === 'true';
-                
             } else {
                 quests = JSON.parse(JSON.stringify(hardcodedQuests));
             }
-            
-            // lastDailyReset/lastWeeklyReset 플래그가 없으면 현재 시간으로 초기화
-            if (!localStorage.getItem('lastDailyReset')) {
-                localStorage.setItem('lastDailyReset', new Date().toISOString());
-            }
-            if (!localStorage.getItem('lastWeeklyReset')) {
-                localStorage.setItem('lastWeeklyReset', new Date().toISOString());
-            }
-
-            handleAutoReset(); 
-            renderQuests(false); // 초기 로딩 시에는 애니메이션 실행 안 함
+            handleAutoReset();
+            renderQuests(false);
         };
 
-        // Function to render quests and update counters
         const renderQuests = (doCelebrate = true) => {
-            const dailyList = document.getElementById('daily-quest-list');
-            const weeklyList = document.getElementById('weekly-quest-list');
-            const dailyCount = document.getElementById('daily-count');
-            const weeklyCount = document.getElementById('weekly-count');
+            const dList = document.getElementById('daily-quest-list');
+            const wList = document.getElementById('weekly-quest-list');
+            dList.innerHTML = ''; wList.innerHTML = '';
 
-            dailyList.innerHTML = '';
-            weeklyList.innerHTML = '';
+            const dActive = quests.daily.filter(q => !q.disabled);
+            const wActive = quests.weekly.filter(q => !q.disabled);
 
-            // 비활성되지 않은 항목만 표시
-            quests.daily.filter(q => !q.disabled).forEach(quest => dailyList.appendChild(createQuestItem(quest, 'daily')));
-            quests.weekly.filter(q => !q.disabled).forEach(quest => weeklyList.appendChild(createQuestItem(quest, 'weekly')));
-            
-            const dailyActiveQuests = quests.daily.filter(q => !q.disabled);
-            const dailyCompleted = dailyActiveQuests.filter(q => q.completed).length;
-            
-            const weeklyActiveQuests = quests.weekly.filter(q => !q.disabled);
-            const weeklyCompleted = weeklyActiveQuests.filter(q => q.completed).length;
+            dActive.forEach(q => dList.appendChild(createItem(q, 'daily')));
+            wActive.forEach(q => wList.appendChild(createItem(q, 'weekly')));
 
-            dailyCount.textContent = `${dailyCompleted}/${dailyActiveQuests.length}`;
-            weeklyCount.textContent = `${weeklyCompleted}/${weeklyActiveQuests.length}`;
-            
-            // -------------------- 독립적인 축하 애니메이션 로직 (버그 수정) --------------------
-            
+            const dComp = dActive.filter(q => q.completed).length;
+            const wComp = wActive.filter(q => q.completed).length;
+
+            document.getElementById('daily-count').textContent = `${dComp}/${dActive.length}`;
+            document.getElementById('weekly-count').textContent = `${wComp}/${wActive.length}`;
+
             if (doCelebrate) {
-                // 1. 일일 컨텐츠 모두 완료 확인
-                if (dailyActiveQuests.length > 0 && dailyCompleted === dailyActiveQuests.length && !dailyCelebrated) {
-                    celebrate('오늘의 컨텐츠 완료!');
-                    dailyCelebrated = true;
-                    // 버그 수정: 즉시 상태 저장 (애니메이션 플래그 포함)
-                    saveQuests(); 
-                } 
-                // 일일 컨텐츠가 완료되지 않았다면 플래그를 false로 초기화 (클릭으로 인해 완료가 취소되었을 경우 대비)
-                else if (dailyCelebrated && dailyCompleted < dailyActiveQuests.length) {
-                    dailyCelebrated = false;
-                    saveQuests(); 
-                }
+                if (dActive.length > 0 && dComp === dActive.length && !dailyCelebrated) {
+                    celebrate('오늘의 컨텐츠 완료!'); dailyCelebrated = true;
+                } else if (dComp < dActive.length) dailyCelebrated = false;
 
-                // 2. 주간 컨텐츠 모두 완료 확인
-                if (weeklyActiveQuests.length > 0 && weeklyCompleted === weeklyActiveQuests.length && !weeklyCelebrated) {
-                    celebrate('주간 컨텐츠 완료!');
-                    weeklyCelebrated = true;
-                    // 버그 수정: 즉시 상태 저장 (애니메이션 플래그 포함)
-                    saveQuests(); 
-                }
-                // 주간 컨텐츠가 완료되지 않았다면 플래그를 false로 초기화 (클릭으로 인해 완료가 취소되었을 경우 대비)
-                else if (weeklyCelebrated && weeklyCompleted < weeklyActiveQuests.length) {
-                    weeklyCelebrated = false;
-                    saveQuests();
-                }
+                if (wActive.length > 0 && wComp === wActive.length && !weeklyCelebrated) {
+                    celebrate('주간 컨텐츠 완료!'); weeklyCelebrated = true;
+                } else if (wComp < wActive.length) weeklyCelebrated = false;
             }
-
-            // 축하 로직에서 saveQuests를 처리하므로 여기서는 중복 호출하지 않습니다.
-            // 다만, doCelebrate가 false인 경우(비활성 설정 변경 등)에는 여기서 저장해야 합니다.
-            if (!doCelebrate) {
-                 saveQuests();
-            }
+            saveQuests();
         };
 
-        // Function to create quest item HTML element
-        const createQuestItem = (quest, type) => {
+        const createItem = (q, type) => {
             const li = document.createElement('li');
-            li.className = `flex items-center p-2 rounded-lg shadow-sm transition-all duration-200 quest-item`;
+            li.className = `flex items-center p-2 rounded-lg shadow-sm transition-all ${q.completed ? 'bg-green-100' : 'bg-white hover:bg-gray-100'} quest-item`;
+            li.onclick = () => {
+                q.completed = !q.completed;
+                renderQuests(true);
+            };
             
-            // 신규/기존 no-wrap 항목들
-            if (quest.id === 'weekly-13' || quest.id === 'weekly-14' || quest.id === 'weekly-16' || quest.id === 'weekly-19' || quest.id === 'weekly-3-2') {
-                li.classList.add('no-wrap');
-            }
+            const span = document.createElement('span');
+            span.className = 'flex-grow text-sm sm:text-base';
             
-            li.onclick = () => handleItemClick(quest.id, type);
-
-            li.classList.add(quest.completed ? 'bg-green-100' : 'bg-white'); 
-            li.classList.add(quest.completed ? 'text-gray-700' : 'hover:bg-gray-100');
-            if (quest.disabled) {
-                li.classList.add('disabled-item');
-                li.onclick = null; 
-            } else {
-                li.classList.add('cursor-pointer');
-            }
-
-            const nameSpan = document.createElement('span');
-            nameSpan.className = `flex-grow text-sm sm:text-base`; 
+            let name = q.name;
+            q.emphasizedParts.forEach(p => {
+                name = name.replace(p, `<span class="emphasized-char">${p}</span>`);
+            });
+            span.innerHTML = name;
             
-            const parts = renderQuestNameWithEmphasis(quest.name, quest.emphasizedParts);
-            parts.forEach(p => nameSpan.appendChild(p));
+            const check = document.createElement('span');
+            check.textContent = '✓';
+            check.className = `ml-auto gucci-highlight-text font-bold transition-opacity ${q.completed ? 'opacity-100' : 'opacity-0'}`;
             
-            li.appendChild(nameSpan);
-
-            const checkmarkSpan = document.createElement('span');
-            checkmarkSpan.textContent = '✓';
-            checkmarkSpan.className = `ml-auto text-xl gucci-highlight-text font-bold w-6 text-center transition-opacity duration-200 ${quest.completed ? 'opacity-100' : 'opacity-0'}`;
-            li.appendChild(checkmarkSpan);
-
+            li.appendChild(span); li.appendChild(check);
             return li;
         };
 
-        // Function to apply emphasis to quest names
-        const renderQuestNameWithEmphasis = (name, emphasizedParts) => {
-            const elements = [];
-            let currentText = name;
-
-            emphasizedParts.forEach(part => {
-                const index = currentText.indexOf(part);
-                if (index !== -1) {
-                    const textBefore = currentText.substring(0, index);
-                    const emphasizedPart = currentText.substring(index, index + part.length);
-                    currentText = currentText.substring(index + part.length);
-
-                    if (textBefore) {
-                        elements.push(document.createTextNode(textBefore));
-                    }
-                    const span = document.createElement('span');
-                    span.textContent = emphasizedPart;
-                    span.className = 'emphasized-char';
-                    elements.push(span);
-                }
-            });
-
-            if (currentText) {
-                elements.push(document.createTextNode(currentText));
-            }
-            return elements;
-        };
-
-        // Function to toggle quest completion status
-        const toggleCompletion = (id, type) => {
-            const questToToggle = quests[type].find(q => q.id === id);
-            if (questToToggle) {
-                questToToggle.completed = !questToToggle.completed;
-                renderQuests(true); 
-            }
-        };
-
-        // Function to handle item click (with scroll check)
-        let scrollTimeout;
-        const handleItemClick = (id, type) => {
-            if (isScrolling) {
-                return;
-            }
-            toggleCompletion(id, type);
-        };
-        
-        // 스크롤 이벤트 리스너 추가 (모바일 터치 오류 방지)
-        const addScrollListeners = () => {
-            const dailyWrapper = document.getElementById('daily-list-wrapper');
-            const weeklyWrapper = document.getElementById('weekly-list-wrapper');
-
-            [dailyWrapper, weeklyWrapper].forEach(wrapper => {
-                if (wrapper) {
-                    wrapper.addEventListener('scroll', () => {
-                        isScrolling = true;
-                        clearTimeout(scrollTimeout);
-                        scrollTimeout = setTimeout(() => {
-                            isScrolling = false;
-                        }, 50); 
-                    }, { passive: true });
-                }
-            });
-        };
-
-        // Function to open the disable modal
         const openDisableModal = (type) => {
-            currentModalType = type;
-            const modal = document.getElementById('disable-modal');
-            const modalTitle = document.getElementById('modal-title');
-            const modalList = document.getElementById('modal-list');
-
-            modalTitle.textContent = `${type === 'daily' ? '일일' : '주간'} 컨텐츠 비활성 설정`;
-            modalList.innerHTML = '';
-            
-            quests[type].forEach(quest => {
-                const item = document.createElement('div');
-                item.className = 'flex items-center';
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.checked = quest.disabled;
-                checkbox.id = `disable-${quest.id}`;
-                checkbox.className = 'mr-2 h-4 w-4 rounded focus:ring-offset-0 gucci-checkbox cursor-pointer';
-
-                const label = document.createElement('label');
-                label.htmlFor = `disable-${quest.id}`;
-                label.textContent = quest.name;
-                label.className = 'flex-grow text-sm cursor-pointer';
-
-                checkbox.onchange = () => toggleDisable(quest.id, type);
-
-                item.appendChild(checkbox);
-                item.appendChild(label);
-                modalList.appendChild(item);
+            const m = document.getElementById('disable-modal');
+            const list = document.getElementById('modal-list');
+            list.innerHTML = '';
+            quests[type].forEach(q => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center gap-2';
+                const cb = document.createElement('input');
+                cb.type = 'checkbox'; cb.checked = q.disabled;
+                cb.onchange = () => { q.disabled = cb.checked; if(q.disabled) q.completed = false; renderQuests(false); };
+                const lb = document.createElement('label'); lb.textContent = q.name;
+                div.appendChild(cb); div.appendChild(lb);
+                list.appendChild(div);
             });
-
-            modal.classList.remove('hidden');
-        };
-        
-        // Function to close the disable modal
-        const closeDisableModal = () => {
-            document.getElementById('disable-modal').classList.add('hidden');
+            m.classList.remove('hidden');
         };
 
-        // Function to toggle disable status from the modal
-        const toggleDisable = (id, type) => {
-            const questToToggle = quests[type].find(q => q.id === id);
-            if (questToToggle) {
-                questToToggle.disabled = !questToToggle.disabled;
-                if (questToToggle.disabled) {
-                    questToToggle.completed = false;
-                }
-                renderQuests(false); // 비활성 설정 변경 시에는 애니메이션 실행 안 함
-            }
-        };
+        const closeDisableModal = () => document.getElementById('disable-modal').classList.add('hidden');
 
-        // On page load, load quests and start the timers
         window.onload = () => {
             initializeQuests();
-            addScrollListeners(); 
-            setInterval(updateTimers, 1000); 
+            setInterval(updateTimers, 1000);
         };
     </script>
 </body>
