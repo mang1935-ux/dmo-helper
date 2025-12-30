@@ -153,7 +153,7 @@
                 { id: 'daily-5', name: '간쿠몬의 수련장', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-6', name: '시즌패스 퀘스트 - 일일', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-7', name: '겨울이벤트(재료 200개) - 일일', completed: false, disabled: false, emphasizedParts: ['겨울이벤트'] },
-                { id: 'daily-7-2', name: '착한아이 나쁜아이', completed: false, disabled: false, emphasizedParts: [] },
+                { id: 'daily-frontier', name: '프론티어 퀘스트 - 일일', completed: false, disabled: false, emphasizedParts: ['프론티어'] },
                 { id: 'daily-8', name: 'T 디지털 드로우', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-9', name: '서버대륙 사막 - 이속칩', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'daily-10', name: '요일 던전 (요던) - 그림자 미궁', completed: false, disabled: false, emphasizedParts: ['요던'] },
@@ -168,6 +168,7 @@
                 { id: 'weekly-2', name: '디지몬 아레나', completed: false, disabled: false, emphasizedParts: [] },
                 { id: 'weekly-3', name: '요코하마 비밀공원 (참치캔)', completed: false, disabled: false, emphasizedParts: ['참치캔'] },
                 { id: 'weekly-3-2', name: '겨울이벤트(재료 200개) - 주간', completed: false, disabled: false, emphasizedParts: ['겨울이벤트'] },
+                { id: 'weekly-frontier', name: '프론티어 퀘스트 - 주간', completed: false, disabled: false, emphasizedParts: ['프론티어'] },
                 { id: 'weekly-4', name: '로얄베이스 HARD (로어) - 주간', completed: false, disabled: false, emphasizedParts: ['로어'] },
                 { id: 'weekly-5', name: '파괴와 재생 (스던) - 주간', completed: false, disabled: false, emphasizedParts: ['스던'] },
                 { id: 'weekly-6', name: '디지몬 카이저 (메청)', completed: false, disabled: false, emphasizedParts: ['메청'] },
@@ -181,7 +182,7 @@
                 { id: 'weekly-14', name: '황룡몬 던전 HARD (판어)', completed: false, disabled: false, emphasizedParts: ['판어'] },
                 { id: 'weekly-15', name: '다크웹 NORMAL', completed: false, disabled: false, emphasizedParts: ['다크웹'] },
                 { id: 'weekly-16', name: '네버랜드 NORMAL', completed: false, disabled: false, emphasizedParts: ['네버랜드'] },
-                { id: 'weekly-19', name: '악몽 NORMAL', completed: false, disabled: false, emphasizedParts: ['악몽'] },
+                { id: 'weekly-19', name: '악몽 HARD', completed: false, disabled: false, emphasizedParts: ['악몽'] },
             ]
         };
 
@@ -213,7 +214,6 @@
             const lastDailyResetStr = localStorage.getItem('lastDailyReset');
             const lastWeeklyResetStr = localStorage.getItem('lastWeeklyReset');
 
-            // 일일 리셋 (00:00)
             const dailyThreshold = new Date(now);
             dailyThreshold.setHours(0, 0, 0, 0);
 
@@ -227,7 +227,6 @@
                 localStorage.setItem('lastDailyReset', now.toISOString());
             }
 
-            // 주간 리셋 (화요일 12:00)
             const weeklyResetDay = 2;
             const weeklyResetHour = 12;
             let weeklyThreshold = new Date(now);
@@ -357,7 +356,8 @@
             
             let name = q.name;
             q.emphasizedParts.forEach(p => {
-                name = name.replace(p, `<span class="emphasized-char">${p}</span>`);
+                const regex = new RegExp(p, "g");
+                name = name.replace(regex, `<span class="emphasized-char">${p}</span>`);
             });
             span.innerHTML = name;
             
